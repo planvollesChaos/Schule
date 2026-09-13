@@ -114,6 +114,7 @@ button{font-family:inherit;}
 .sign-gallery svg{width:112px;height:112px;}
 .sign-gallery figcaption{font-size:12.5px;color:var(--ink-soft);margin-top:8px;line-height:1.45;}
 .sign-gallery figcaption b{color:var(--ink);font-size:13px;}
+.sign-gallery .nr{display:block;font-size:10.5px;color:var(--coral);font-weight:700;letter-spacing:.4px;margin-bottom:1px;}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;}}
 </style>
 </head>
@@ -122,21 +123,22 @@ button{font-family:inherit;}
 <script>
 (function(){
 "use strict";
-
 /* ============================================================
-   Verkehrszeichen – nach den amtlichen Vorlagen gezeichnet
+   Verkehrszeichen nach dem Lernplakat zur Radfahrausbildung:
+   Gefahrzeichen · Vorschriftzeichen · Richtzeichen
    Farben: Verkehrsrot RAL 3020, Verkehrsblau RAL 5017,
-   Verkehrsgelb RAL 1023, Schwarz, Weiß
+   Verkehrsgelb RAL 1023, Verkehrsgrün, Schwarz, Weiß
    ============================================================ */
-const C = {red:"#CC0605", blue:"#0B4EA2", yellow:"#F6C400", black:"#1A1A18", white:"#FFFFFF"};
+const C = {red:"#CC0605", blue:"#0B4EA2", yellow:"#F6C400", green:"#008351",
+  black:"#1A1A18", white:"#FFFFFF", grey:"#9B9B93", greyDark:"#6E6E67"};
 
-/* Grundformen der Schilder */
+/* ---------- Grundformen ---------- */
 function discSign(fill, inner){
   return `<circle cx="50" cy="50" r="46" fill="${fill}"/>${inner||""}`;
 }
-function ringSign(inner){
+function ringSign(inner, ringColor){
   return `<circle cx="50" cy="50" r="46" fill="${C.white}"/>
-    <circle cx="50" cy="50" r="40" fill="none" stroke="${C.red}" stroke-width="12"/>${inner||""}`;
+    <circle cx="50" cy="50" r="40" fill="none" stroke="${ringColor||C.red}" stroke-width="12"/>${inner||""}`;
 }
 function triangleUp(inner){
   return `<path d="M50 5 L97 87 A6 6 0 0 1 92 95 L8 95 A6 6 0 0 1 3 87 Z"
@@ -145,8 +147,21 @@ function triangleUp(inner){
 function squareSign(fill, inner){
   return `<rect x="4" y="4" width="92" height="92" rx="6" fill="${fill}"/>${inner||""}`;
 }
+function whiteSquare(inner){
+  return `<rect x="4" y="4" width="92" height="92" rx="6" fill="${C.white}" stroke="#D9D3C6" stroke-width="2"/>${inner||""}`;
+}
+/* Graue Fassung mit Schrägstrichen – so sehen alle "Ende"-Schilder aus. */
+function endeVariante(id, inner){
+  return `<defs><clipPath id="cl-${id}"><rect x="4" y="4" width="92" height="92" rx="6"/></clipPath></defs>
+    <rect x="4" y="4" width="92" height="92" rx="6" fill="#E8E6E0" stroke="#C9C6BE" stroke-width="2"/>
+    <g opacity=".55">${inner}</g>
+    <g clip-path="url(#cl-${id})" stroke="${C.greyDark}" stroke-width="5">
+      <line x1="0" y1="96" x2="96" y2="0"/><line x1="18" y1="112" x2="112" y2="18"/>
+      <line x1="-14" y1="82" x2="82" y2="-14"/>
+    </g>`;
+}
 
-/* Piktogramme */
+/* ---------- Piktogramme ---------- */
 function bikePicto(color, x, y, s){
   return `<g transform="translate(${x},${y}) scale(${s})" stroke="${color}" stroke-width="3.2"
       fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -162,7 +177,6 @@ function personPicto(color, x, y, s){
     <path d="M-4.2 3 L-6.5 14.5 L-3.2 15.2 L0 5.2 L3.2 15.2 L6.5 14.5 L4.2 3 Z"/>
   </g>`;
 }
-/* Zwei Kinder – das größere geht voran, das kleinere folgt (wie auf Zeichen 136). */
 function childrenPicto(color){
   return `<g fill="${color}">
     <g transform="translate(42,64) scale(0.95)">
@@ -177,6 +191,12 @@ function childrenPicto(color){
     </g>
   </g>`;
 }
+function carPicto(color, x, y, s){
+  return `<g transform="translate(${x},${y}) scale(${s})" fill="${color}">
+    <path d="M-24 4 L-20 -6 Q-18 -10 -13 -10 L11 -10 Q16 -10 19 -6 L24 4 L24 9 Q24 11 22 11 L-22 11 Q-24 11 -24 9 Z"/>
+    <circle cx="-13" cy="11" r="4.5"/><circle cx="13" cy="11" r="4.5"/>
+  </g>`;
+}
 function arrowUp(color, x, y, w, h){
   const half = w/2, headW = w*1.9, headH = h*0.42;
   return `<path d="M${x-half} ${y+h/2} L${x-half} ${y-h/2+headH} L${x-headW/2} ${y-h/2+headH}
@@ -189,68 +209,150 @@ function arrowDown(color, x, y, w, h){
 }
 
 const SIGNS = {
-  /* ---------- Vorfahrt ---------- */
+/* ==================== GEFAHRZEICHEN ==================== */
+  "gefahrstelle": {
+    cat:"gefahr", nr:"101", name:"Gefahrstelle",
+    meaning:"Achtung, hier ist etwas Gefährliches – langsam fahren und genau schauen.",
+    svg:triangleUp(`<rect x="45" y="36" width="10" height="32" rx="3" fill="${C.black}"/>
+      <circle cx="50" cy="77" r="5.6" fill="${C.black}"/>`)
+  },
+  "kreuzung-rechts": {
+    cat:"gefahr", nr:"102", name:"Kreuzung oder Einmündung",
+    meaning:"Kreuzung ohne Vorfahrtschilder – hier gilt rechts vor links.",
+    svg:triangleUp(`<rect x="46" y="33" width="8" height="45" fill="${C.black}"/>
+      <rect x="23" y="51.5" width="54" height="8" fill="${C.black}"/>`)
+  },
+  "kurve": {
+    cat:"gefahr", nr:"103", name:"Kurve",
+    meaning:"Gleich kommt eine Kurve – langsamer werden und nicht schneiden.",
+    svg:triangleUp(`<path d="M42 80 L42 58 Q42 44 56 44 L62 44" fill="none" stroke="${C.black}"
+        stroke-width="9" stroke-linecap="butt"/>
+      <polygon points="58,33 74,44 58,55" fill="${C.black}"/>`)
+  },
+  "gefaelle": {
+    cat:"gefahr", nr:"108", name:"Gefälle",
+    meaning:"Es geht bergab – früh bremsen, sonst wirst du zu schnell.",
+    svg:triangleUp(`<path d="M24 76 L76 44 L76 76 Z" fill="${C.black}"/>
+      <text x="34" y="60" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="${C.black}">10%</text>`)
+  },
+  "unebene-fahrbahn": {
+    cat:"gefahr", nr:"112", name:"Unebene Fahrbahn",
+    meaning:"Die Straße hat Löcher oder Buckel – festhalten und langsam fahren.",
+    svg:triangleUp(`<path d="M24 74 Q34 56 44 74 Z" fill="${C.black}"/>
+      <path d="M52 74 Q64 52 76 74 Z" fill="${C.black}"/>
+      <rect x="22" y="74" width="56" height="5" fill="${C.black}"/>`)
+  },
+  "verengte-fahrbahn": {
+    cat:"gefahr", nr:"120", name:"Verengte Fahrbahn",
+    meaning:"Die Straße wird von beiden Seiten schmaler – Abstand halten.",
+    svg:triangleUp(`<g fill="${C.black}">
+      <path d="M28 80 L28 66 L38 52 L38 80 Z"/><path d="M72 80 L72 66 L62 52 L62 80 Z"/></g>`)
+  },
+  "einseitig-verengt": {
+    cat:"gefahr", nr:"121", name:"Einseitig verengte Fahrbahn",
+    meaning:"Die Straße wird auf einer Seite schmaler.",
+    svg:triangleUp(`<g fill="${C.black}">
+      <path d="M72 80 L72 62 L60 48 L60 80 Z"/><rect x="32" y="48" width="6" height="32"/></g>`)
+  },
+  "arbeitsstelle": {
+    cat:"gefahr", nr:"123", name:"Arbeitsstelle (Baustelle)",
+    meaning:"Hier wird gebaut – besonders vorsichtig fahren, oft liegt Sand auf der Straße.",
+    svg:triangleUp(`<g fill="${C.black}">
+      <circle cx="46" cy="50" r="5"/>
+      <path d="M42 56 L50 56 L54 74 L46 74 Z"/>
+      <path d="M50 58 L66 44 L69 48 L54 62 Z"/>
+      <path d="M62 40 L74 40 L74 48 L62 48 Z"/>
+      <rect x="26" y="76" width="48" height="5"/></g>`)
+  },
+  "gegenverkehr-gefahr": {
+    cat:"gefahr", nr:"125", name:"Gegenverkehr",
+    meaning:"Achtung, dir kommen Fahrzeuge entgegen.",
+    svg:triangleUp(`${arrowUp(C.black, 40, 62, 8, 34)}${arrowDown(C.black, 60, 62, 8, 34)}`)
+  },
+  "ampel": {
+    cat:"gefahr", nr:"131", name:"Lichtzeichenanlage (Ampel)",
+    meaning:"Gleich kommt eine Ampel – bereit sein zum Anhalten.",
+    svg:triangleUp(`<rect x="40" y="38" width="20" height="44" rx="4" fill="${C.black}"/>
+      <circle cx="50" cy="48" r="5.5" fill="#E4453B"/>
+      <circle cx="50" cy="60" r="5.5" fill="${C.yellow}"/>
+      <circle cx="50" cy="72" r="5.5" fill="#3FA45B"/>`)
+  },
+  "fussgaenger-gefahr": {
+    cat:"gefahr", nr:"133", name:"Fußgänger",
+    meaning:"Hier gehen viele Fußgänger über die Straße.",
+    svg:triangleUp(personPicto(C.black, 50, 63, 1.15))
+  },
+  "achtung-kinder": {
+    cat:"gefahr", nr:"136", name:"Kinder",
+    meaning:"Hier spielen oft Kinder – langsam fahren und besonders aufpassen.",
+    svg:triangleUp(childrenPicto(C.black))
+  },
+  "achtung-radfahrer": {
+    cat:"gefahr", nr:"138", name:"Radverkehr",
+    meaning:"Hier kreuzen Radfahrer – Autofahrer müssen mit euch rechnen.",
+    svg:triangleUp(bikePicto(C.black, 50, 63, 0.95))
+  },
+  "bahnuebergang": {
+    cat:"gefahr", nr:"151", name:"Bahnübergang",
+    meaning:"Gleich kommen Schienen – anhalten, schauen, hören. Der Zug hat immer Vorfahrt.",
+    svg:triangleUp(`<g fill="${C.black}">
+      <path d="M30 72 L30 54 Q30 48 36 48 L58 48 Q64 48 64 54 L64 72 Z"/>
+      <rect x="64" y="58" width="8" height="8"/>
+      <circle cx="38" cy="76" r="4.5"/><circle cx="56" cy="76" r="4.5"/>
+      <rect x="44" y="38" width="6" height="10"/></g>`)
+  },
+  "bake": {
+    cat:"gefahr", nr:"159", name:"Zweistreifige Bake",
+    meaning:"Noch etwa 160 Meter bis zum Bahnübergang.",
+    svg:`<rect x="34" y="6" width="32" height="88" rx="3" fill="${C.white}" stroke="#D9D3C6" stroke-width="2"/>
+      <g fill="${C.red}"><path d="M34 34 L66 14 L66 30 L34 50 Z"/><path d="M34 62 L66 42 L66 58 L34 78 Z"/></g>`
+  },
+
+/* ==================== VORSCHRIFTZEICHEN ==================== */
+  "andreaskreuz": {
+    cat:"vorschrift", nr:"201", name:"Andreaskreuz",
+    meaning:"Hier kreuzt die Eisenbahn. Der Zug hat immer Vorfahrt – warten, bis frei ist.",
+    /* Zwei gekreuzte Balken, weiß mit roten Enden. */
+    svg:`<g transform="translate(50,50)">
+        ${[28,-28].map(a=>`<g transform="rotate(${a})">
+          <rect x="-46" y="-8" width="92" height="16" rx="2" fill="${C.white}" stroke="#D9D3C6" stroke-width="1"/>
+          <rect x="-46" y="-8" width="28" height="16" rx="2" fill="${C.red}"/>
+          <rect x="18" y="-8" width="28" height="16" rx="2" fill="${C.red}"/>
+        </g>`).join("")}
+      </g>`
+  },
   "vorfahrt-gewaehren": {
-    cat:"vorfahrt", nr:"205", name:"Vorfahrt gewähren",
+    cat:"vorschrift", nr:"205", name:"Vorfahrt gewähren",
     meaning:"Du musst warten und die anderen zuerst fahren lassen.",
     svg:`<path d="M8 8 L92 8 A6 6 0 0 1 97 17 L55 92 A6 6 0 0 1 45 92 L3 17 A6 6 0 0 1 8 8 Z"
       fill="${C.white}" stroke="${C.red}" stroke-width="11" stroke-linejoin="round"/>`
   },
   "stop": {
-    cat:"vorfahrt", nr:"206", name:"Stop – Vorfahrt gewähren",
+    cat:"vorschrift", nr:"206", name:"Halt! Vorfahrt gewähren (Stop)",
     meaning:"Immer anhalten, schauen, dann erst weiterfahren.",
     svg:`<polygon points="31,3 69,3 97,31 97,69 69,97 31,97 3,69 3,31" fill="${C.red}"/>
       <polygon points="33,9 67,9 91,33 91,67 67,91 33,91 9,67 9,33" fill="none" stroke="${C.white}" stroke-width="5"/>
       <text x="50" y="61" text-anchor="middle" font-family="Arial,Helvetica,sans-serif"
         font-size="26" font-weight="bold" fill="${C.white}" letter-spacing="1">STOP</text>`
   },
-  "vorfahrtstrasse": {
-    cat:"vorfahrt", nr:"306", name:"Vorfahrtstraße",
-    meaning:"Du hast Vorfahrt – die anderen müssen warten.",
-    svg:`<path d="M50 2 L98 50 L50 98 L2 50 Z" fill="${C.white}"/>
-      <path d="M50 12 L88 50 L50 88 L12 50 Z" fill="${C.yellow}"/>`
-  },
-  "vorfahrtstrasse-ende": {
-    cat:"vorfahrt", nr:"307", name:"Ende der Vorfahrtstraße",
-    meaning:"Ab hier hast du keine Vorfahrt mehr – jetzt gilt wieder rechts vor links.",
-    svg:`<defs><clipPath id="raute"><path d="M50 12 L88 50 L50 88 L12 50 Z"/></clipPath></defs>
-      <path d="M50 2 L98 50 L50 98 L2 50 Z" fill="${C.white}"/>
-      <path d="M50 12 L88 50 L50 88 L12 50 Z" fill="${C.yellow}"/>
-      <g clip-path="url(#raute)" stroke="#3C3A35" stroke-width="3">
-        <line x1="5" y1="35" x2="95" y2="35"/><line x1="5" y1="45" x2="95" y2="45"/>
-        <line x1="5" y1="55" x2="95" y2="55"/><line x1="5" y1="65" x2="95" y2="65"/>
-      </g>`
-  },
-  "vorfahrt-kreuzung": {
-    cat:"vorfahrt", nr:"301", name:"Vorfahrt an der nächsten Kreuzung",
-    meaning:"An der nächsten Kreuzung hast du Vorfahrt.",
-    /* Der dicke senkrechte Balken ist deine Straße – sie hat Vorfahrt. */
-    svg:triangleUp(`<rect x="42" y="33" width="16" height="45" fill="${C.black}"/>
-      <rect x="23" y="52" width="54" height="6" fill="${C.black}"/>`)
-  },
-  "kreuzung-rechts": {
-    cat:"vorfahrt", nr:"102", name:"Kreuzung: rechts vor links",
-    meaning:"Achtung Kreuzung ohne Vorfahrtschilder – hier gilt rechts vor links.",
-    /* Gleich dicke Balken: keine Straße ist bevorrechtigt. */
-    svg:triangleUp(`<rect x="46" y="33" width="8" height="45" fill="${C.black}"/>
-      <rect x="23" y="51.5" width="54" height="8" fill="${C.black}"/>`)
-  },
   "gegenverkehr-vorrang": {
-    cat:"vorfahrt", nr:"208", name:"Dem Gegenverkehr Vorrang gewähren",
+    cat:"vorschrift", nr:"208", name:"Vorrang des Gegenverkehrs",
     meaning:"Die Straße wird eng. Du musst warten – der Gegenverkehr darf zuerst.",
     svg:ringSign(`${arrowDown(C.red, 38, 51, 14, 48)}${arrowUp(C.black, 63, 51, 7, 42)}`)
   },
-  "vorrang-gegenverkehr": {
-    cat:"vorfahrt", nr:"308", name:"Vorrang vor dem Gegenverkehr",
-    meaning:"Die Straße wird eng, aber du darfst zuerst – der Gegenverkehr wartet.",
-    svg:squareSign(C.blue, `${arrowUp(C.white, 38, 50, 15, 56)}${arrowDown(C.red, 65, 50, 8, 46)}`)
+  "geradeaus-rechts": {
+    cat:"vorschrift", nr:"214", name:"Geradeaus oder rechts",
+    meaning:"Hier darfst du nur geradeaus oder nach rechts fahren.",
+    svg:discSign(C.blue, `<path d="M38 78 L38 40" stroke="${C.white}" stroke-width="11" stroke-linecap="butt"/>
+      <polygon points="28,44 38,26 48,44" fill="${C.white}"/>
+      <path d="M38 56 L60 56" stroke="${C.white}" stroke-width="11"/>
+      <polygon points="56,44 76,56 56,68" fill="${C.white}"/>`)
   },
   "kreisverkehr": {
-    cat:"vorfahrt", nr:"215", name:"Kreisverkehr",
+    cat:"vorschrift", nr:"215", name:"Kreisverkehr",
     meaning:"Wer schon im Kreis fährt, hat Vorfahrt. Beim Rausfahren Handzeichen geben.",
-    /* Drei Pfeile gegen den Uhrzeigersinn – so wird im Kreisverkehr gefahren. */
     svg:discSign(C.blue, `
-      <g fill="none" stroke="${C.white}" stroke-width="6" stroke-linecap="butt">
+      <g fill="none" stroke="${C.white}" stroke-width="6">
         <path d="M75.4 40.8 A27 27 0 0 0 50.9 23.0"/>
         <path d="M29.3 32.6 A27 27 0 0 0 26.2 62.7"/>
         <path d="M45.3 76.6 A27 27 0 0 0 72.9 64.3"/>
@@ -261,94 +363,176 @@ const SIGNS = {
         <g transform="translate(74.5,61.4) rotate(-65)"><polygon points="0,-5.5 9.5,0 0,5.5"/></g>
       </g>`)
   },
-
-  /* ---------- Verbote ---------- */
-  "fahrverbot": {
-    cat:"verbot", nr:"250", name:"Verbot für Fahrzeuge aller Art",
-    meaning:"Hier darf niemand hineinfahren – auch du nicht mit dem Fahrrad. Schieben ist erlaubt.",
-    svg:ringSign()
+  "einbahnstrasse": {
+    cat:"vorschrift", nr:"220", name:"Einbahnstraße",
+    meaning:"Hier fahren alle nur in Pfeilrichtung. Von der anderen Seite darfst du nicht hinein.",
+    svg:`<rect x="2" y="27" width="96" height="46" rx="5" fill="${C.blue}"/>
+      <g transform="translate(50,50) rotate(90)">${arrowUp(C.white, 0, 0, 11, 62)}</g>`
   },
-  "einfahrt-verboten": {
-    cat:"verbot", nr:"267", name:"Verbot der Einfahrt",
-    meaning:"Hier darfst du nicht hineinfahren – meist eine Einbahnstraße von vorn.",
-    svg:discSign(C.red, `<rect x="17" y="43" width="66" height="14" rx="2" fill="${C.white}"/>`)
+  "rechts-vorbei": {
+    cat:"vorschrift", nr:"222", name:"Rechts vorbei",
+    meaning:"An dem Hindernis musst du rechts vorbeifahren.",
+    svg:discSign(C.blue, `<g transform="translate(50,50) rotate(140)">${arrowUp(C.white, 0, 0, 13, 54)}</g>`)
   },
-  "fahrrad-verboten": {
-    cat:"verbot", nr:"254", name:"Verbot für Radfahrer",
-    meaning:"Hier darfst du nicht mit dem Fahrrad fahren – absteigen und schieben.",
-    svg:ringSign(bikePicto(C.black, 50, 50, 1.3))
+  "haltestelle": {
+    cat:"vorschrift", nr:"224", name:"Haltestelle",
+    meaning:"Hier halten Bus oder Bahn. Warte, bis der Bus weg ist, und fahr langsam vorbei.",
+    svg:`<circle cx="50" cy="50" r="46" fill="${C.green}"/>
+      <circle cx="50" cy="50" r="34" fill="${C.yellow}"/>
+      <g fill="${C.green}"><rect x="36" y="32" width="7" height="36"/><rect x="57" y="32" width="7" height="36"/>
+      <rect x="36" y="46" width="28" height="8"/></g>`
   },
-
-  /* ---------- Wege für Rad und Fuß ---------- */
   "radweg": {
-    cat:"gebot", nr:"237", name:"Radweg",
+    cat:"vorschrift", nr:"237", name:"Radweg",
     meaning:"Dieser Weg ist für Radfahrer – hier musst du fahren, nicht auf der Straße.",
     svg:discSign(C.blue, bikePicto(C.white, 50, 50, 1.55))
   },
   "gehweg": {
-    cat:"gebot", nr:"239", name:"Gehweg",
+    cat:"vorschrift", nr:"239", name:"Gehweg",
     meaning:"Nur für Fußgänger. Dein Fahrrad musst du hier schieben.",
     svg:discSign(C.blue, personPicto(C.white, 50, 50, 1.9))
   },
   "geh-radweg": {
-    cat:"gebot", nr:"240", name:"Gemeinsamer Geh- und Radweg",
-    meaning:"Fußgänger und Radfahrer benutzen denselben Weg – nimm Rücksicht und fahr langsam.",
+    cat:"vorschrift", nr:"240", name:"Gemeinsamer Geh- und Radweg",
+    meaning:"Fußgänger und Radfahrer benutzen denselben Weg – Rücksicht nehmen und langsam fahren.",
     svg:discSign(C.blue, `${bikePicto(C.white, 50, 29, 0.82)}
       <rect x="23" y="48" width="54" height="3.5" fill="${C.white}"/>
       ${personPicto(C.white, 50, 71, 1.05)}`)
   },
   "getrennt-rad-gehweg": {
-    cat:"gebot", nr:"241", name:"Getrennter Rad- und Gehweg",
+    cat:"vorschrift", nr:"241", name:"Getrennter Rad- und Gehweg",
     meaning:"Links und rechts getrennt: Radfahrer auf die eine Seite, Fußgänger auf die andere.",
     svg:discSign(C.blue, `${bikePicto(C.white, 27, 50, 0.72)}
       <rect x="48.5" y="20" width="3.5" height="60" fill="${C.white}"/>
       ${personPicto(C.white, 73, 50, 1.05)}`)
   },
-  "fahrtrichtung-rechts": {
-    cat:"gebot", nr:"209", name:"Vorgeschriebene Fahrtrichtung rechts",
-    meaning:"Hier musst du nach rechts fahren.",
-    svg:discSign(C.blue, `<g transform="translate(50,50) rotate(90)">${arrowUp(C.white, 0, 0, 13, 52)}</g>`)
+  "fussgaengerzone": {
+    cat:"vorschrift", nr:"242.1", name:"Beginn einer Fußgängerzone",
+    meaning:"Nur für Fußgänger. Mit dem Fahrrad heißt das: absteigen und schieben.",
+    svg:squareSign(C.blue, `${personPicto(C.white, 50, 38, 1.25)}
+      <rect x="18" y="62" width="64" height="20" rx="3" fill="${C.white}"/>
+      <text x="50" y="77" text-anchor="middle" font-family="Arial,sans-serif" font-size="14"
+        font-weight="bold" fill="${C.blue}">ZONE</text>`)
+  },
+  "fussgaengerzone-ende": {
+    cat:"vorschrift", nr:"242.2", name:"Ende einer Fußgängerzone",
+    meaning:"Ab hier gelten wieder die normalen Regeln – du darfst wieder fahren.",
+    svg:endeVariante("fz", `${personPicto(C.greyDark, 50, 38, 1.25)}
+      <rect x="18" y="62" width="64" height="20" rx="3" fill="none" stroke="${C.greyDark}" stroke-width="3"/>
+      <text x="50" y="77" text-anchor="middle" font-family="Arial,sans-serif" font-size="14"
+        font-weight="bold" fill="${C.greyDark}">ZONE</text>`)
+  },
+  "fahrradstrasse": {
+    cat:"vorschrift", nr:"244.1", name:"Beginn einer Fahrradstraße",
+    meaning:"Diese Straße gehört den Radfahrern. Ihr dürft nebeneinander fahren, Autos nur ausnahmsweise.",
+    svg:whiteSquare(`${bikePicto(C.blue, 50, 34, 1.05)}
+      <text x="50" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5"
+        font-weight="bold" fill="${C.blue}">Fahrrad-</text>
+      <text x="50" y="85" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5"
+        font-weight="bold" fill="${C.blue}">straße</text>`)
+  },
+  "fahrradstrasse-ende": {
+    cat:"vorschrift", nr:"244.2", name:"Ende einer Fahrradstraße",
+    meaning:"Ab hier ist es wieder eine normale Straße.",
+    svg:endeVariante("fs", `${bikePicto(C.greyDark, 50, 34, 1.05)}
+      <text x="50" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5"
+        font-weight="bold" fill="${C.greyDark}">Fahrrad-</text>
+      <text x="50" y="85" text-anchor="middle" font-family="Arial,sans-serif" font-size="11.5"
+        font-weight="bold" fill="${C.greyDark}">straße</text>`)
+  },
+  "fahrverbot": {
+    cat:"vorschrift", nr:"250", name:"Verbot für Fahrzeuge aller Art",
+    meaning:"Hier darf niemand hineinfahren – auch du nicht. Schieben ist erlaubt.",
+    svg:ringSign()
+  },
+  "fahrrad-verboten": {
+    cat:"vorschrift", nr:"254", name:"Verbot für Radverkehr",
+    meaning:"Hier darfst du nicht mit dem Fahrrad fahren – absteigen und schieben.",
+    svg:ringSign(bikePicto(C.black, 50, 50, 1.3))
+  },
+  "fussgaenger-verboten": {
+    cat:"vorschrift", nr:"259", name:"Verbot für Fußgänger",
+    meaning:"Hier dürfen Fußgänger nicht gehen.",
+    svg:ringSign(personPicto(C.black, 50, 50, 1.55))
+  },
+  "einfahrt-verboten": {
+    cat:"vorschrift", nr:"267", name:"Verbot der Einfahrt",
+    meaning:"Hier darfst du nicht hineinfahren – meist eine Einbahnstraße von vorn.",
+    svg:discSign(C.red, `<rect x="17" y="43" width="66" height="14" rx="2" fill="${C.white}"/>`)
+  },
+  "tempo30-beginn": {
+    cat:"vorschrift", nr:"274.1", name:"Beginn einer Tempo-30-Zone",
+    meaning:"Hier dürfen Autos nur 30 fahren – trotzdem vorsichtig sein.",
+    svg:whiteSquare(`<circle cx="50" cy="38" r="24" fill="${C.white}" stroke="${C.red}" stroke-width="7"/>
+      <text x="50" y="47" text-anchor="middle" font-family="Arial,sans-serif" font-size="25"
+        font-weight="bold" fill="${C.black}">30</text>
+      <text x="50" y="82" text-anchor="middle" font-family="Arial,sans-serif" font-size="16"
+        font-weight="bold" fill="${C.black}">ZONE</text>`)
+  },
+  "tempo30-ende": {
+    cat:"vorschrift", nr:"274.2", name:"Ende einer Tempo-30-Zone",
+    meaning:"Ab hier dürfen Autos wieder schneller fahren – pass besonders auf.",
+    svg:endeVariante("t30", `<circle cx="50" cy="38" r="24" fill="none" stroke="${C.greyDark}" stroke-width="5"/>
+      <text x="50" y="47" text-anchor="middle" font-family="Arial,sans-serif" font-size="25"
+        font-weight="bold" fill="${C.greyDark}">30</text>
+      <text x="50" y="82" text-anchor="middle" font-family="Arial,sans-serif" font-size="16"
+        font-weight="bold" fill="${C.greyDark}">ZONE</text>`)
+  },
+  "haltverbot-absolut": {
+    cat:"vorschrift", nr:"283", name:"Absolutes Haltverbot",
+    meaning:"Hier darf kein Auto halten. Für dich heißt das: die Straße bleibt frei.",
+    svg:discSign(C.blue, `<circle cx="50" cy="50" r="40" fill="none" stroke="${C.red}" stroke-width="9"/>
+      <g stroke="${C.red}" stroke-width="9" stroke-linecap="round">
+        <line x1="26" y1="26" x2="74" y2="74"/><line x1="74" y1="26" x2="26" y2="74"/></g>`)
+  },
+  "haltverbot-eingeschraenkt": {
+    cat:"vorschrift", nr:"286", name:"Eingeschränktes Haltverbot",
+    meaning:"Hier darf man nur kurz zum Ein- und Aussteigen halten, nicht parken.",
+    svg:discSign(C.blue, `<circle cx="50" cy="50" r="40" fill="none" stroke="${C.red}" stroke-width="9"/>
+      <line x1="26" y1="26" x2="74" y2="74" stroke="${C.red}" stroke-width="9" stroke-linecap="round"/>`)
   },
 
-  /* ---------- Gefahrzeichen ---------- */
-  "achtung-kinder": {
-    cat:"gefahr", nr:"136", name:"Achtung Kinder",
-    meaning:"Hier spielen oft Kinder – langsam fahren und besonders aufpassen.",
-    svg:triangleUp(childrenPicto(C.black))
+/* ==================== RICHTZEICHEN ==================== */
+  "vorfahrt-kreuzung": {
+    cat:"richt", nr:"301", name:"Vorfahrt",
+    meaning:"An der nächsten Kreuzung hast du Vorfahrt – der dicke Balken ist deine Straße.",
+    svg:triangleUp(`<rect x="42" y="33" width="16" height="45" fill="${C.black}"/>
+      <rect x="23" y="52" width="54" height="6" fill="${C.black}"/>`)
   },
-  "achtung-radfahrer": {
-    cat:"gefahr", nr:"138", name:"Achtung Radverkehr",
-    meaning:"Hier kreuzen Radfahrer – Autos müssen mit euch rechnen, trotzdem vorsichtig sein.",
-    svg:triangleUp(bikePicto(C.black, 50, 63, 0.95))
+  "vorfahrtstrasse": {
+    cat:"richt", nr:"306", name:"Vorfahrtstraße",
+    meaning:"Du hast Vorfahrt – die anderen müssen warten.",
+    svg:`<path d="M50 2 L98 50 L50 98 L2 50 Z" fill="${C.white}"/>
+      <path d="M50 12 L88 50 L50 88 L12 50 Z" fill="${C.yellow}"/>`
   },
-  "gefahrstelle": {
-    cat:"gefahr", nr:"101", name:"Gefahrstelle",
-    meaning:"Achtung, hier ist etwas Gefährliches – langsam fahren und schauen.",
-    svg:triangleUp(`<rect x="45" y="36" width="10" height="32" rx="3" fill="${C.black}"/>
-      <circle cx="50" cy="77" r="5.6" fill="${C.black}"/>`)
+  "vorfahrtstrasse-ende": {
+    cat:"richt", nr:"307", name:"Ende der Vorfahrtstraße",
+    meaning:"Ab hier hast du keine Vorfahrt mehr – jetzt gilt wieder rechts vor links.",
+    svg:`<defs><clipPath id="raute"><path d="M50 12 L88 50 L50 88 L12 50 Z"/></clipPath></defs>
+      <path d="M50 2 L98 50 L50 98 L2 50 Z" fill="${C.white}"/>
+      <path d="M50 12 L88 50 L50 88 L12 50 Z" fill="${C.yellow}"/>
+      <g clip-path="url(#raute)" stroke="#3C3A35" stroke-width="3">
+        <line x1="5" y1="35" x2="95" y2="35"/><line x1="5" y1="45" x2="95" y2="45"/>
+        <line x1="5" y1="55" x2="95" y2="55"/><line x1="5" y1="65" x2="95" y2="65"/>
+      </g>`
   },
-
-  /* ---------- Hinweise ---------- */
-  "einbahnstrasse": {
-    cat:"hinweis", nr:"220", name:"Einbahnstraße",
-    meaning:"Hier fahren alle nur in Pfeilrichtung. Von der anderen Seite darfst du nicht hinein.",
-    svg:`<rect x="2" y="27" width="96" height="46" rx="5" fill="${C.blue}"/>
-      <g transform="translate(50,50) rotate(90)">${arrowUp(C.white, 0, 0, 11, 62)}</g>`
+  "vorrang-gegenverkehr": {
+    cat:"richt", nr:"308", name:"Vorrang vor dem Gegenverkehr",
+    meaning:"Die Straße wird eng, aber du darfst zuerst – der Gegenverkehr wartet.",
+    svg:squareSign(C.blue, `${arrowUp(C.white, 38, 50, 15, 56)}${arrowDown(C.red, 65, 50, 8, 46)}`)
   },
-  "zebrastreifen": {
-    cat:"hinweis", nr:"350", name:"Fußgängerüberweg (Zebrastreifen)",
-    meaning:"Fußgänger haben Vorrang. Als Radfahrer absteigen und schieben.",
-    svg:squareSign(C.blue, `
-      <polygon points="50,22 84,84 16,84" fill="${C.white}"/>
-      <g fill="${C.blue}">
-        <rect x="21" y="76" width="58" height="4"/><rect x="27" y="67" width="46" height="4"/>
-        <rect x="33" y="58" width="34" height="4"/><rect x="39" y="49" width="22" height="4"/>
-      </g>
-      ${personPicto(C.black, 50, 47, 1.0)}`)
+  "ortstafel": {
+    cat:"richt", nr:"310", name:"Ortstafel",
+    meaning:"Hier beginnt ein Ort. Ab jetzt dürfen Autos nur noch 50 fahren.",
+    svg:`<rect x="4" y="26" width="92" height="48" rx="4" fill="${C.yellow}" stroke="${C.black}" stroke-width="2"/>
+      <text x="50" y="50" text-anchor="middle" font-family="Arial,sans-serif" font-size="15"
+        font-weight="bold" fill="${C.black}">Musterdorf</text>
+      <line x1="16" y1="57" x2="84" y2="57" stroke="${C.black}" stroke-width="1.5"/>
+      <text x="50" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="${C.black}">Kreis Musterland</text>`
   },
   "spielstrasse": {
-    cat:"hinweis", nr:"325", name:"Verkehrsberuhigter Bereich (Spielstraße)",
-    meaning:"Nur Schrittgeschwindigkeit. Kinder dürfen hier überall spielen.",
+    cat:"richt", nr:"325.1", name:"Beginn eines verkehrsberuhigten Bereichs",
+    meaning:"Spielstraße: Nur Schrittgeschwindigkeit. Kinder dürfen hier überall spielen.",
     svg:squareSign(C.blue, `
       <path d="M11 42 L24 29 L37 42 L37 60 L11 60 Z" fill="${C.white}"/>
       ${personPicto(C.white, 55, 38, 0.82)}
@@ -360,21 +544,67 @@ const SIGNS = {
       </g>
       <rect x="11" y="87" width="78" height="4" fill="${C.white}"/>`)
   },
+  "spielstrasse-ende": {
+    cat:"richt", nr:"325.2", name:"Ende eines verkehrsberuhigten Bereichs",
+    meaning:"Ab hier gelten wieder die normalen Verkehrsregeln.",
+    svg:endeVariante("vb", `
+      <path d="M11 42 L24 29 L37 42 L37 60 L11 60 Z" fill="${C.greyDark}"/>
+      ${personPicto(C.greyDark, 55, 38, 0.82)}
+      <circle cx="30" cy="72" r="5" fill="${C.greyDark}"/>
+      <g fill="${C.greyDark}"><path d="M46 78 L50 68 L70 68 L76 78 Z"/>
+        <circle cx="53" cy="80" r="4"/><circle cx="71" cy="80" r="4"/></g>`)
+  },
+  "kraftfahrstrasse": {
+    cat:"richt", nr:"331.1", name:"Kraftfahrstraße",
+    meaning:"Nur für Autos und Motorräder. Fahrräder dürfen hier auf keinen Fall fahren.",
+    svg:squareSign(C.blue, carPicto(C.white, 50, 48, 1.25))
+  },
+  "zebrastreifen": {
+    cat:"richt", nr:"350", name:"Fußgängerüberweg (Zebrastreifen)",
+    meaning:"Fußgänger haben Vorrang. Als Radfahrer absteigen und schieben.",
+    svg:squareSign(C.blue, `
+      <polygon points="50,22 84,84 16,84" fill="${C.white}"/>
+      <g fill="${C.blue}">
+        <rect x="21" y="76" width="58" height="4"/><rect x="27" y="67" width="46" height="4"/>
+        <rect x="33" y="58" width="34" height="4"/><rect x="39" y="49" width="22" height="4"/>
+      </g>
+      ${personPicto(C.black, 50, 47, 1.0)}`)
+  },
+  "verkehrshelfer": {
+    cat:"richt", nr:"356", name:"Verkehrshelfer",
+    meaning:"Hier hilft jemand beim Überqueren – auf seine Zeichen achten.",
+    svg:whiteSquare(`${personPicto(C.blue, 38, 46, 1.2)}
+      <rect x="56" y="30" width="34" height="20" rx="3" fill="${C.yellow}" stroke="${C.black}" stroke-width="1.5"/>
+      <text x="73" y="44" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="${C.black}">Halt</text>
+      <text x="50" y="82" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="${C.black}">Verkehrshelfer</text>`)
+  },
   "sackgasse": {
-    cat:"hinweis", nr:"357", name:"Sackgasse",
+    cat:"richt", nr:"357", name:"Sackgasse",
     meaning:"Diese Straße hat keinen Ausgang – du musst wieder zurückfahren.",
-    svg:`<rect x="4" y="4" width="92" height="92" rx="6" fill="${C.white}" stroke="#D9D3C6" stroke-width="2"/>
-      <rect x="43" y="44" width="14" height="46" fill="${C.blue}"/>
-      <rect x="20" y="22" width="60" height="14" fill="${C.blue}"/>`
+    svg:whiteSquare(`<rect x="43" y="44" width="14" height="46" fill="${C.blue}"/>
+      <rect x="20" y="22" width="60" height="14" fill="${C.blue}"/>`)
+  },
+  "erste-hilfe": {
+    cat:"richt", nr:"358", name:"Erste Hilfe",
+    meaning:"Hier gibt es Hilfe, wenn jemand verletzt ist.",
+    svg:squareSign(C.blue, `<g fill="${C.white}"><rect x="30" y="42" width="40" height="16" rx="2"/>
+      <rect x="42" y="30" width="16" height="40" rx="2"/></g>`)
+  },
+  "vorwegweiser-rad": {
+    cat:"richt", nr:"442", name:"Vorwegweiser für bestimmte Verkehrsarten",
+    meaning:"Zeigt, wo es für Radfahrer langgeht.",
+    svg:`<rect x="4" y="18" width="92" height="64" rx="4" fill="${C.yellow}" stroke="${C.black}" stroke-width="2"/>
+      ${bikePicto(C.black, 36, 40, 0.72)}
+      <path d="M28 66 L62 66" stroke="${C.black}" stroke-width="7"/>
+      <polygon points="58,56 78,66 58,76" fill="${C.black}"/>`
   }
 };
 const SIGN_CATS = {
-  vorfahrt:"Vorfahrt und Vorrang",
-  verbot:"Verbote",
-  gebot:"Wege für Rad und Fuß",
   gefahr:"Gefahrzeichen",
-  hinweis:"Hinweise"
+  vorschrift:"Vorschriftzeichen",
+  richt:"Richtzeichen"
 };
+
 
 function signSvg(id){
   const s = SIGNS[id];
@@ -435,10 +665,14 @@ function crossingSvg(cfg){
    ============================================================ */
 const SIGN_IDS = Object.keys(SIGNS);
 
-function signQuestions(){
+/* Ohne cat: alle Schilder. Mit cat: nur eine Gruppe – die falschen Antworten
+   kommen dann auch aus dieser Gruppe, sonst wäre es zu leicht zu erraten. */
+function signQuestions(cat){
+  const ids = cat ? SIGN_IDS.filter(id=>SIGNS[id].cat===cat) : SIGN_IDS;
+  const pool = ids.length >= 4 ? ids : SIGN_IDS;
   const qs = [];
-  SIGN_IDS.forEach(id=>{
-    const wrong = SIGN_IDS.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
+  ids.forEach(id=>{
+    const wrong = pool.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
     const opts = [id, ...wrong].sort(()=>Math.random()-0.5);
     qs.push({
       key:"sign-mean-"+id,
@@ -447,7 +681,7 @@ function signQuestions(){
       options: opts.map(o=>({label:SIGNS[o].name, correct:o===id})),
       why: SIGNS[id].meaning
     });
-    const wrong2 = SIGN_IDS.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
+    const wrong2 = pool.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
     const opts2 = [id, ...wrong2].sort(()=>Math.random()-0.5);
     qs.push({
       key:"sign-find-"+id,
@@ -695,7 +929,7 @@ function renderStart(){
     <div class="stat"><span>Insgesamt geschafft</span><div class="bar"><i style="width:${masteryPct(all)}%"></i></div><span>${masteryPct(all)}%</span></div>
     <div class="modes">
       <button class="mode" data-mode="signs"><div class="ic">🚸</div>
-        <div><h3>Verkehrszeichen</h3><div class="sub">${SIGN_IDS.length} Schilder erkennen · ${masteryPct(signKeys)}% geschafft</div></div></button>
+        <div><h3>Verkehrszeichen</h3><div class="sub">${SIGN_IDS.length} Schilder in 3 Gruppen · ${masteryPct(signKeys)}% geschafft</div></div></button>
       <button class="mode" data-mode="row"><div class="ic">🚦</div>
         <div><h3>Vorfahrt</h3><div class="sub">Wer fährt zuerst? · ${masteryPct(rowKeys)}% geschafft</div></div></button>
       <button class="mode" data-mode="rules"><div class="ic">📋</div>
@@ -720,6 +954,7 @@ function renderStart(){
     b.onclick = ()=>{
       const m = b.getAttribute("data-mode");
       if(m==="gallery") renderGallery();
+      else if(m==="signs") renderSignPicker();
       else startSession(m);
     };
   });
@@ -736,15 +971,15 @@ function renderGallery(){
       return `<h3 style="font-size:15px;margin:24px 0 2px;color:var(--ink-soft);">${SIGN_CATS[cat]}</h3>
         <div class="sign-gallery">
           ${ids.map(id=>`<figure>${signSvg(id)}
-            <figcaption><b>${SIGNS[id].name}</b><br>${SIGNS[id].meaning}</figcaption></figure>`).join("")}
+            <figcaption><span class="nr">${SIGNS[id].nr}</span><b>${SIGNS[id].name}</b><br>${SIGNS[id].meaning}</figcaption></figure>`).join("")}
         </div>`;
     }).join("")}`;
   app.querySelector("#back-start").onclick = e=>{ e.preventDefault(); renderStart(); };
 }
 
-function pickQuestions(mode){
+function pickQuestions(mode, cat){
   const shuffle = a => a.slice().sort(()=>Math.random()-0.5);
-  if(mode==="signs") return shuffle(signQuestions()).slice(0, 12);
+  if(mode==="signs") return shuffle(signQuestions(cat)).slice(0, 12);
   if(mode==="row") return shuffle(RIGHT_OF_WAY);
   if(mode==="rules") return shuffle(RULES);
   const mix = shuffle(signQuestions()).slice(0,6)
@@ -753,9 +988,31 @@ function pickQuestions(mode){
   return shuffle(mix);
 }
 
-function startSession(mode){
-  session = {mode, qs: pickQuestions(mode), idx:0, right:0, wrong:0, marks:[]};
+function startSession(mode, cat){
+  session = {mode, cat, qs: pickQuestions(mode, cat), idx:0, right:0, wrong:0, marks:[]};
   renderQuestion();
+}
+/* Bei 53 Schildern lohnt sich die Wahl: alle oder nur eine Gruppe. */
+function renderSignPicker(){
+  app.innerHTML = `
+    <a class="back" href="#" id="back-start">← Zurück</a>
+    ${header()}
+    <h2 style="font-size:19px;margin:22px 0 4px;">Welche Schilder möchtest du üben?</h2>
+    <div class="modes">
+      <button class="mode" data-cat=""><div class="ic">🚸</div>
+        <div><h3>Alle Schilder</h3><div class="sub">${SIGN_IDS.length} Stück, bunt gemischt</div></div></button>
+      ${Object.keys(SIGN_CATS).map(cat=>{
+        const n = SIGN_IDS.filter(id=>SIGNS[id].cat===cat).length;
+        const icon = cat==="gefahr" ? "⚠️" : cat==="vorschrift" ? "⛔" : "ℹ️";
+        const keys = signQuestions(cat).map(q=>q.key);
+        return `<button class="mode" data-cat="${cat}"><div class="ic">${icon}</div>
+          <div><h3>${SIGN_CATS[cat]}</h3><div class="sub">${n} Schilder · ${masteryPct(keys)}% geschafft</div></div></button>`;
+      }).join("")}
+    </div>`;
+  app.querySelector("#back-start").onclick = e=>{ e.preventDefault(); renderStart(); };
+  app.querySelectorAll("[data-cat]").forEach(b=>{
+    b.onclick = ()=>startSession("signs", b.getAttribute("data-cat") || null);
+  });
 }
 
 function renderQuestion(){
@@ -841,7 +1098,7 @@ function renderSummary(){
         <button class="btn btn-ghost" id="home">Zur Übersicht</button>
       </div>
     </div>`;
-  app.querySelector("#again").onclick = ()=>startSession(session.mode);
+  app.querySelector("#again").onclick = ()=>startSession(session.mode, session.cat);
   app.querySelector("#home").onclick = renderStart;
 }
 
