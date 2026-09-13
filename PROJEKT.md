@@ -55,8 +55,24 @@ Schulsachen, Tiere, Kleidung, Familie, Körper, Wetter & Wochentage, Nützliche 
 ✏️ Lückentext (deutsches Wort steht grau in der Lücke) · 🔤 Buchstaben-Puzzle ·
 🧱 Satz-Puzzle · 🎧 Hörverstehen (Hör-Quiz, später Diktat) · 🏆 Test mit bis zu 5 Sternen.
 
-Weiter: 📖 Lesegeschichten mit Verständnisfragen auf Deutsch, ❤️ zum Merken,
+Beim Hörverstehen bleibt die deutsche Bedeutung verdeckt – sie erscheint erst nach
+einem Fehlversuch, und von Anfang an nur dann, wenn das Gerät gar keine englische
+Stimme hat.
+
+Weiter: 📚 Bücherregal mit 10 Lesegeschichten und Verständnisfragen auf Deutsch,
 📈 Fortschritt mit Lernkurve der letzten 14 Tage, Vokabeln per Liste einfügen.
+
+**Das Bücherregal:** Jedes Kind hat sein eigenes. Eine Geschichte, die noch niemand
+gelesen hat, ist mit **neu** gekennzeichnet; sobald sie geöffnet wurde, verschwindet
+die Markierung und sie rutscht nach hinten. Mit ❤️ wird sie zur Lieblingsgeschichte,
+steht ganz oben und wird nie weggeräumt. Gelesen und gemerkt hängen beide am Profil –
+Ellenas Regal sieht also anders aus als Merles, obwohl es dieselben Geschichten sind.
+Löschen kann nur das Eltern-Profil.
+
+In der Claude-Version kommt der Knopf **✨ Neue Geschichte** dazu: die schreibt Wilma
+aus den Vokabeln des Kindes. Davon bleiben höchstens 8 liegen, die ältesten werden
+still ersetzt – gemerkte nie. Auf GitHub Pages gibt es diesen Knopf nicht, weil dort
+kein `window.claude` existiert; deshalb sind die 10 Geschichten fest eingebaut.
 
 Bei jeder richtigen Antwort flitzt ein Corgi – der Hund der Queen – mit der
 Union-Jack-Fahne durchs Bild.
@@ -111,22 +127,30 @@ Verkehrswacht fest.
    lag bisher nur hinter einem Link, der nicht zugänglich war, und muss direkt
    eingefügt werden.
 2. **Englisch inhaltlich weiterentwickeln** – Wunsch: mehr Verstehen statt
-   Auswendiglernen. Vorschläge dazu: Geschichten als Herzstück, Hörverstehen mit
-   ganzen Sätzen, Alltagssituationen statt Wortlisten, Vokabelübungen nur noch als
-   kurzes Aufwärmen.
+   Auswendiglernen. Das Bücherregal ist der erste Schritt. Weiter gedacht:
+   Hörverstehen mit ganzen Sätzen statt Einzelwörtern, Alltagssituationen statt
+   Wortlisten, Vokabelübungen nur noch als kurzes Aufwärmen.
 3. **Ortstafel** in der Sachkunde zeigt `Wilster, Kreis Steinburg` – das
    Beispielbild aus dem Schilderpaket. Für den eigenen Ort müsste das PNG ersetzt
    oder als SVG gezeichnet werden.
 4. **Deutsch** ist auf der Startseite noch ein Platzhalter.
-5. **Beim Hörverstehen steht die deutsche Bedeutung unter dem Hörknopf** – damit
-   lässt sich die Aufgabe lösen, ohne zuzuhören. Gedacht war es als Netz für
-   Geräte ohne englische Stimme.
-6. **Kinder können in Englisch Inseln anlegen und Geschichten löschen.** Die
-   Knöpfe unten sind auf das Eltern-Profil beschränkt, die Kachel „Neue Insel" und
-   der Papierkorb an den Geschichten aber nicht. Gelöschte Geschichten kommen nicht
-   von selbst wieder, weil der Startbestand nur einmal eingespielt wird
-   (`wex:seeded`).
-7. **Zwei Emoji passen nicht zur Vokabel:** `mittens` zeigt einen Dodo 🦤 statt
-   Handschuhe 🧤, `chair` eine Discokugel 🪩 statt einen Stuhl 🪑. In der
-   Bild-Zuordnung führt das in die Irre. Außerdem sind 🩶 (grau) und 🩷 (rosa) neue
-   Emoji, die auf älteren Geräten als leeres Kästchen erscheinen können.
+5. **🩶 (grau) und 🩷 (rosa)** sind neue Emoji. Auf älteren Geräten können sie als
+   leeres Kästchen erscheinen. Bisher nicht beobachtet, nur ein bekanntes Risiko.
+6. **Die Claude-Version und die GitHub-Version driften auseinander.** Alles seit
+   September 2026 – Bücherregal, Corgi, Handy-Ansicht, Hörverstehen – steckt nur in
+   der GitHub-Datei. Vor der nächsten größeren Änderung sollte geklärt werden,
+   welche der beiden die führende ist.
+
+## Erledigt
+
+- Handy-Ansicht: Englisch hatte keinen viewport-Meta-Tag und wurde deshalb
+  herausgezoomt (Sept. 2026).
+- Mathe importiert, Startseite vollständig.
+- Jubel-Animationen in Englisch und Sachkunde.
+- Hörverstehen verriet die Lösung durch die eingeblendete deutsche Bedeutung.
+- Kinder konnten Inseln anlegen und Geschichten löschen.
+- `mittens` zeigte einen Dodo, `chair` eine Discokugel. Korrigiert – und weil der
+  Startbestand vorhandene Vokabeln nie überschreibt, zieht `korrigiereVokabeln()`
+  das auf Geräten nach, auf denen die App schon lief (`wex:seeded` steht jetzt
+  auf `4`).
+- Aus Englisch führte kein Weg zurück zur Fächerauswahl.
