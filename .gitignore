@@ -1,0 +1,10 @@
+# Betriebssystem
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Fotos aus dem Vokabelheft gehören nicht ins Repository
+*.jpeg
+*.jpg
+*.png
+*.heic
