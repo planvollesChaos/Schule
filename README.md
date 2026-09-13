@@ -3,7 +3,7 @@
 Ein interaktiver Englisch-Vokabeltrainer für Grundschulkinder (Klasse 3/4, Lehrwerk *Playway*).
 Die App läuft komplett im Browser – ohne Login, ohne Server, nach dem ersten Laden auch offline.
 
-**➡️ App öffnen:** https://NUTZERNAME.github.io/wortschatz-expedition/
+**➡️ App öffnen:** https://planvolleschaos.github.io/Schule/
 
 ## Was drin ist
 
