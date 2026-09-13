@@ -7,7 +7,7 @@ ohne Login, ohne Server, nach dem ersten Laden auch offline.
 
 | Fach | Adresse | Status |
 |---|---|---|
-| 🇬🇧 Englisch – Wortschatz-Expedition | https://planvolleschaos.github.io/Schule/englisch/ | fertig |
+| 💬 Englisch – Wortschatz-Expedition | https://planvolleschaos.github.io/Schule/englisch/ | fertig |
 | 🔢 Mathe | – | geplant |
 | 📚 Deutsch | – | geplant |
 
