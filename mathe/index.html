@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nest und Hand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Rückweg zur Fächerauswahl und Anzeige, wer gerade übt */
+.topbar .zurueck{
+  flex:none;text-decoration:none;font-weight:700;font-size:13px;color:var(--accent);
+  border:1.5px solid var(--edge);border-radius:999px;padding:5px 12px;background:var(--card);white-space:nowrap;
+}
+.topbar .wer{
+  flex:none;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ink2);
+  border:1.5px solid var(--edge);border-radius:999px;padding:4px 11px 4px 4px;background:var(--card);
+}
+.topbar .wer i{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;font-style:normal;font-size:11px;font-weight:800;}
+
+:root{
+  --paper:#FBF7EF; --card:#FFFDF8; --karo:#D9E2D6;
+  --ink:#3A3227; --ink2:#6B6152; --ink3:#9A9080; --edge:#E7DFD1;
+  --sage:#7BA89C; --rose:#DFA49D; --butter:#EFCB85; --sky:#A6C4D8; --lilac:#B3A6CC;
+  --straw:#D9B87C; --straw-d:#B08B52; --shell:#FBF1DE; --speck:#8A6E4B;
+  --good:#6F9E63; --good-bg:#EAF3E4; --bad:#CE8C84; --bad-bg:#FAEDEA;
+  --accent:#5F9689; --accent-soft:#E4F0EC; --hot:#D9954E;
+  --lift:0 2px 0 rgba(58,50,39,.05), 0 12px 26px -20px rgba(58,50,39,.55);
+  --blob:18px 22px 19px 21px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#221E19; --card:#2B2620; --karo:#3A342B;
+    --ink:#F2EBDD; --ink2:#BDB2A0; --ink3:#8D8474; --edge:#3D362C;
+    --sage:#8FBFB1; --rose:#E9B4AD; --butter:#F2D392; --sky:#B4CFE2; --lilac:#C2B6DA;
+    --straw:#C9A96F; --straw-d:#93733F; --shell:#F3E7D2; --speck:#6E5638;
+    --good:#8CC07C; --good-bg:#25341F; --bad:#E5A69D; --bad-bg:#3A2521;
+    --accent:#8FBFB1; --accent-soft:#28352F; --hot:#EBAA63;
+    --lift:0 2px 0 rgba(0,0,0,.15), 0 14px 30px -22px #000;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#221E19; --card:#2B2620; --karo:#3A342B;
+  --ink:#F2EBDD; --ink2:#BDB2A0; --ink3:#8D8474; --edge:#3D362C;
+  --sage:#8FBFB1; --rose:#E9B4AD; --butter:#F2D392; --sky:#B4CFE2; --lilac:#C2B6DA;
+  --straw:#C9A96F; --straw-d:#93733F; --shell:#F3E7D2; --speck:#6E5638;
+  --good:#8CC07C; --good-bg:#25341F; --bad:#E5A69D; --bad-bg:#3A2521;
+  --accent:#8FBFB1; --accent-soft:#28352F; --hot:#EBAA63;
+  --lift:0 2px 0 rgba(0,0,0,.15), 0 14px 30px -22px #000;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.55;
+  -webkit-tap-highlight-color:transparent;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(to right,var(--karo) 0 1px,transparent 1px 26px),
+    repeating-linear-gradient(to bottom,var(--karo) 0 1px,transparent 1px 26px),
+    radial-gradient(ellipse 62% 38% at 10% 6%, color-mix(in srgb,var(--sky) 32%,transparent), transparent 62%),
+    radial-gradient(ellipse 52% 34% at 92% 18%, color-mix(in srgb,var(--rose) 28%,transparent), transparent 62%),
+    radial-gradient(ellipse 58% 40% at 78% 72%, color-mix(in srgb,var(--butter) 26%,transparent), transparent 64%),
+    radial-gradient(ellipse 48% 32% at 16% 88%, color-mix(in srgb,var(--sage) 26%,transparent), transparent 62%);
+  background-position:0 0,12px 0,0 12px,0 0,0 0,0 0,0 0;
+  background-attachment:scroll;
+}
+h1,h2,h3,h4{font-family:"Baloo 2",Nunito,sans-serif;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.005em;line-height:1.2}
+button{font:inherit;color:inherit;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.wrap{max-width:940px;margin:0 auto;padding:0 14px calc(70px + env(safe-area-inset-bottom))}
+
+/* ---------- Kopfleiste + Eierpappe ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
+.topbar .inner{max-width:940px;margin:0 auto;padding:7px 14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.brand{font-family:"Baloo 2";font-weight:600;font-size:17px;margin-right:auto;display:flex;align-items:center;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:13px;padding:5px 10px;border-radius:99px;background:var(--card);border:1px solid var(--edge)}
+.chip.hot{color:var(--hot);border-color:color-mix(in srgb,var(--hot) 45%,var(--edge))}
+.iconbtn{background:var(--card);border:1px solid var(--edge);border-radius:12px;width:44px;height:44px;cursor:pointer;font-size:17px;display:grid;place-items:center;flex:none}
+.iconbtn:hover{border-color:var(--accent)}
+.carton{flex:1 0 100%;display:flex;align-items:center;gap:9px;padding:5px 0 2px;min-width:0;flex-wrap:wrap}
+.pappe{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:4px;border-radius:8px;
+  background:linear-gradient(160deg,var(--straw),var(--straw-d));box-shadow:inset 0 -2px 0 rgba(0,0,0,.16);flex:0 1 218px;max-width:218px}
+.slot{aspect-ratio:1;border-radius:50%;background:rgba(0,0,0,.16);display:grid;place-items:center}
+.slot .ei{width:78%;height:88%}
+.cartonlab{font-size:11.5px;font-weight:800;color:var(--ink2);line-height:1.15;flex:0 1 auto;min-width:0}
+.cartonlab b{font-family:"Baloo 2";font-size:15px;color:var(--accent);display:block}
+.stackpappe{display:flex;gap:2px;align-items:center;flex:0 1 auto;min-width:0;overflow:hidden}
+.mini-pappe{width:15px;height:10px;border-radius:2px;flex:none;background:linear-gradient(160deg,var(--straw),var(--straw-d))}
+@media(max-width:430px){.stackpappe{display:none}.cartonlab{font-size:11px}}
+
+.savechip{margin-left:auto;flex:none;font-size:11.5px;font-weight:800;color:var(--ink3);padding:4px 9px;border-radius:99px;
+  background:var(--card);border:1px solid var(--edge);white-space:nowrap;transition:color .3s,border-color .3s,background .3s}
+.savechip.flash{color:var(--good);border-color:var(--good);background:var(--good-bg)}
+@media(max-width:430px){.savechip{font-size:11px;padding:4px 7px}}
+
+.spine{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:16px 0}
+.day{background:var(--card);border:1px solid var(--edge);border-top:4px solid var(--edge);border-radius:var(--blob);padding:9px 10px;cursor:pointer;text-align:left;box-shadow:var(--lift)}
+.day .dn{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--ink3);text-transform:uppercase}
+.day .dt{font-family:"Baloo 2";font-size:14.5px;font-weight:600;line-height:1.15;margin-top:2px}
+.day .dp{font-size:11.5px;color:var(--ink3);font-weight:700;margin-top:3px}
+.day[aria-current="true"]{border-top-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--lift)}
+.day.full{border-top-color:var(--good)} .day.full .dp{color:var(--good)}
+@media(max-width:600px){.spine{grid-template-columns:repeat(2,1fr)}}
+
+.stage{background:var(--card);border:1px solid var(--edge);border-radius:24px 26px 24px 27px;box-shadow:var(--lift);overflow:hidden}
+.stage-head{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--edge);flex-wrap:wrap}
+.stage-head .icon{width:40px;height:40px;border-radius:14px 15px 13px 16px;display:grid;place-items:center;font-size:20px;background:var(--accent-soft);flex:none}
+.stage-head h2{font-size:17px}
+.stage-head .sub{font-size:11.5px;color:var(--ink3);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.pips{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;max-width:150px;justify-content:flex-end}
+.pip{width:8px;height:8px;border-radius:99px;background:var(--edge)}
+.pip.done{background:var(--good)} .pip.now{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.stage-body{padding:20px 14px 22px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.ask{font-family:"Baloo 2";font-size:clamp(19px,5vw,25px);font-weight:600;text-align:center;max-width:32ch;line-height:1.25}
+.hintline{font-size:14.5px;color:var(--ink2);text-align:center;max-width:46ch;min-height:1.3em}
+.step{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);text-align:center}
+
+/* ---------- Wachtel-Material ---------- */
+.ei{width:15px;height:19px;flex:none;border-radius:50%/58% 58% 42% 42%;background:var(--shell);
+  background-image:radial-gradient(circle at 32% 34%,var(--speck) 0 1.7px,transparent 1.8px),
+                   radial-gradient(circle at 68% 58%,var(--speck) 0 1.5px,transparent 1.6px),
+                   radial-gradient(circle at 46% 79%,var(--speck) 0 1.2px,transparent 1.3px),
+                   radial-gradient(circle at 74% 24%,#9C7C52 0 1.1px,transparent 1.2px);
+  box-shadow:inset -2px -3px 3px rgba(120,92,58,.24)}
+.schachtel{width:clamp(44px,12vw,54px);height:clamp(21px,5.6vw,25px);flex:none;border-radius:4px;background:var(--straw);padding:3px;
+  display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:2px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.16)}
+.schachtel i{border-radius:50%;background:var(--shell)}
+.karton{width:clamp(36px,10vw,46px);height:clamp(36px,10vw,46px);flex:none;border-radius:5px;background:#C29B67;
+  background-image:repeating-linear-gradient(to right,rgba(251,241,222,.7) 0 1px,transparent 1px 4.6px),
+                   repeating-linear-gradient(to bottom,rgba(251,241,222,.7) 0 1px,transparent 1px 4.6px);
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.16)}
+.kiste{width:clamp(46px,13vw,58px);height:clamp(36px,10vw,46px);flex:none;border-radius:6px;background:var(--straw-d);position:relative;
+  box-shadow:inset -9px -9px 0 rgba(0,0,0,.13), inset 9px 9px 0 rgba(255,255,255,.16)}
+.kiste::after{content:'';position:absolute;inset:22%;border-radius:3px;border:2px solid rgba(251,241,222,.45)}
+.stack{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:flex-end;max-width:270px}
+.matlabel{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--ink3);text-align:center;width:100%;margin-top:2px}
+.matgroup{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;align-items:flex-end;max-width:180px}
+.piles{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;width:100%}
+.pile{flex:1 1 150px;min-width:140px;max-width:300px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:11px 7px;
+  border-radius:var(--blob);background:color-mix(in srgb,var(--karo) 40%,transparent)}
+.pilename{font-family:"Baloo 2";font-size:clamp(18px,5.2vw,25px);font-weight:600}
+.vs{font-family:"Baloo 2";font-size:17px;color:var(--ink3);align-self:center}
+.diffbox{width:100%;max-width:480px;border-radius:var(--blob);padding:12px 14px;background:var(--accent-soft);display:none;flex-direction:column;gap:8px;align-items:center}
+.diffbox.show{display:flex;animation:popin .3s}
+.diffbox .dl{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.barpair{width:100%;display:flex;flex-direction:column;gap:6px}
+.barrow{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
+.barrow .lab{width:58px;text-align:right;color:var(--ink2)}
+.bartrack{flex:1;height:15px;background:color-mix(in srgb,var(--karo) 70%,transparent);border-radius:99px;overflow:hidden}
+.barfill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.9,.3,1)}
+
+/* ---------- Nest & Hand ---------- */
+.scene{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;width:100%}
+.scenecol{display:flex;flex-direction:column;align-items:center;gap:5px}
+.nest{width:clamp(120px,38vw,158px);min-height:72px;padding:14px 10px 11px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:flex-end;
+  border-radius:14px 14px 76px 76px/14px 14px 52px 52px;
+  background:radial-gradient(ellipse at 50% 6%,#E3C593 0%,var(--straw) 55%,var(--straw-d) 100%);
+  box-shadow:inset 0 -7px 12px rgba(0,0,0,.18), 0 4px 10px -6px rgba(0,0,0,.35)}
+.handbox{display:flex;flex-direction:column;align-items:center;padding-bottom:12px}
+.handbox .h{font-size:clamp(32px,10vw,42px);line-height:1}
+.rolelab{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.rolenum{font-family:"Baloo 2";font-size:clamp(18px,5.2vw,25px);font-weight:600}
+.arrow{font-size:23px;color:var(--ink3);align-self:center;padding-bottom:24px}
+.crossed{position:relative}
+.crossed::after{content:'✕';position:absolute;inset:0;display:grid;place-items:center;font-size:64px;color:var(--bad);opacity:.85;font-weight:700}
+
+/* ---------- Rechenkästchen ---------- */
+.calcwrap{max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.calc{display:inline-block;padding:5px 2px}
+.crow{display:flex;justify-content:flex-end;gap:4px}
+.cell{width:clamp(40px,11.5vw,52px);height:clamp(46px,13vw,58px);border-radius:10px;display:grid;place-items:center;position:relative;
+  font-family:Fredoka;font-weight:500;font-size:clamp(23px,6.6vw,30px);background:color-mix(in srgb,var(--karo) 46%,transparent);border:1.5px solid transparent}
+.cell.blank{background:transparent}
+.cell.op{background:transparent;color:var(--ink2);font-weight:600}
+.cell.mini{height:20px;font-size:14px;background:transparent;color:var(--hot);font-weight:700;align-items:end}
+.cell.slot2{background:var(--card);border:1.5px dashed var(--edge)}
+.cell.slot2.active{border:2px solid var(--accent);background:var(--accent-soft);animation:pulse 1.7s ease-in-out infinite}
+.cell.slot2.filled{border-style:solid;border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.cell.focusnow{box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 50%,transparent)}
+.cell.wrongshake{animation:shake .38s}
+.cell s{opacity:.38;text-decoration-thickness:2px}
+.cell .fix{position:absolute;top:-5px;right:0;font-size:13px;font-weight:700;color:var(--hot);font-style:normal;background:var(--card);padding:0 3px;border-radius:5px;animation:popin .3s}
+.cell .lend{position:absolute;bottom:0;left:2px;font-size:12.5px;font-weight:700;color:var(--sky)}
+.rulebar{height:3px;background:var(--ink);border-radius:99px;margin:4px 0 5px;opacity:.8}
+.pvhead{display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px}
+.pvhead span{width:clamp(40px,11.5vw,52px);text-align:center;font-size:9.5px;font-weight:800;letter-spacing:.02em;color:var(--ink3);line-height:1.1}
+.pvhead b{font-size:11px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 38%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-3px)}}
+@keyframes popin{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ---------- Eingabe ---------- */
+.keypad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:min(360px,100%)}
+.key{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:13px 0;font-family:Fredoka;font-size:22px;font-weight:500;cursor:pointer;box-shadow:0 2px 0 var(--edge);min-height:48px}
+.key:hover{border-color:var(--accent);color:var(--accent)}
+.key:active{transform:translateY(2px);box-shadow:none}
+@media(max-width:560px){
+  .keypad{grid-template-columns:repeat(3,1fr);gap:9px;width:min(300px,100%)}
+  .key{font-size:25px;padding:15px 0;min-height:56px}
+}
+.opts{display:flex;flex-direction:column;gap:9px;width:min(470px,100%)}
+.opts.two{flex-direction:row}
+.opts.two .opt{flex:1;justify-content:center;text-align:center;font-size:17px;padding:19px 10px}
+.opt{text-align:left;background:var(--card);border:1.5px solid var(--edge);border-radius:15px 16px 14px 17px;padding:14px 15px;font-weight:700;font-size:15.5px;cursor:pointer;
+  display:flex;gap:11px;align-items:center;box-shadow:0 2px 0 var(--edge);min-height:52px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt .mark{width:27px;height:27px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:"Baloo 2";font-size:14px;flex:none}
+.opt.right{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.opt.right .mark{background:var(--good);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.opt.wrong .mark{background:var(--bad);color:#fff}
+input[type=text]{font-size:16px}
+.numin{width:min(210px,72vw);height:64px;text-align:center;font-family:Fredoka;font-size:30px;border-radius:15px;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink)}
+.numin:focus{border-color:var(--accent);outline:none}
+
+.fb{width:min(480px,100%);border-radius:15px 16px 14px 17px;padding:12px 15px;font-size:15px;font-weight:600;display:none}
+.fb.show{display:block;animation:popin .25s}
+.fb.ok{background:var(--good-bg);color:var(--good)}
+.fb.no{background:var(--bad-bg);color:var(--bad)}
+.fb.tip{background:var(--accent-soft);color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:15px;padding:14px 24px;font-family:"Baloo 2";font-size:16.5px;font-weight:600;cursor:pointer;
+  box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 55%,#000);min-height:50px}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--edge);box-shadow:none}
+.btn.ghost:hover{color:var(--accent);border-color:var(--accent)}
+.btn.small{padding:10px 17px;font-size:14.5px;min-height:44px}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;width:100%}
+
+.bigvid{display:flex;gap:13px;align-items:center;width:min(480px,100%);text-decoration:none;
+  background:var(--card);border:1.5px solid var(--edge);border-radius:var(--blob);padding:14px 15px;box-shadow:var(--lift)}
+.bigvid:hover{border-color:var(--accent)}
+.bigvid .pl{width:46px;height:46px;flex:none;border-radius:15px;background:var(--rose);color:#fff;display:grid;place-items:center;font-size:17px}
+.bigvid .t{font-family:"Baloo 2";font-weight:600;font-size:16px;color:var(--ink);line-height:1.2;display:block}
+.bigvid .s{font-size:12.5px;color:var(--ink3);font-weight:700;margin-top:2px;display:block}
+.bigvid .go{margin-left:auto;font-size:18px;color:var(--ink3);flex:none}
+
+.hfield{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;width:min(300px,88vw);touch-action:none}
+.sq{aspect-ratio:1;border-radius:4px;background:var(--card);border:1.5px solid var(--edge);cursor:pointer}
+.sq.on{background:var(--straw);border-color:var(--straw-d)}
+.counter{font-family:"Baloo 2";font-size:25px;font-weight:600}
+.counter b{color:var(--accent)}
+
+.pvt{border-collapse:separate;border-spacing:4px}
+.pvt th{font-size:9.5px;letter-spacing:.03em;font-weight:800;color:var(--ink3);line-height:1.15;padding-bottom:2px}
+.pvt input{width:clamp(46px,15vw,64px);height:58px;text-align:center;font-family:Fredoka;font-size:26px;font-weight:500;border-radius:13px;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink)}
+.pvt input:focus{border-color:var(--accent);outline:none;background:var(--accent-soft)}
+.pvt input.ok{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.pvt input.no{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+
+.paper{width:100%;background:var(--card);border:1px solid var(--edge);border-radius:var(--blob);padding:15px;box-shadow:var(--lift)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(102px,1fr));gap:13px 10px;margin-top:11px}
+.ptask{font-family:Fredoka;font-size:18px;font-weight:500;text-align:right;padding:8px 9px;border-radius:10px;background:color-mix(in srgb,var(--karo) 40%,transparent);font-variant-numeric:tabular-nums;line-height:1.35}
+.ptask .no{float:left;font-family:Nunito;font-size:11.5px;font-weight:800;color:var(--ink3)}
+.ptask .sol{display:block;border-top:2px solid var(--ink);margin-top:3px;padding-top:3px;color:var(--good);font-weight:600}
+.ptask .sol.hide{visibility:hidden}
+
+.reward{text-align:center;display:flex;flex-direction:column;align-items:center;gap:11px;padding:8px 0;width:100%}
+.sticker{font-size:56px;animation:popin .45s cubic-bezier(.2,1.6,.4,1)}
+.scorebig{font-family:"Baloo 2";font-size:42px;font-weight:700}
+.bigpappe{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:9px;border-radius:12px;width:min(300px,86vw);
+  background:linear-gradient(160deg,var(--straw),var(--straw-d));box-shadow:inset 0 -4px 0 rgba(0,0,0,.16),var(--lift)}
+.bigpappe .slot{background:rgba(0,0,0,.17)}
+.bigpappe .ei{width:80%;height:90%}
+.pausebox{background:var(--butter);color:#4A3A1E;border-radius:var(--blob);padding:13px 16px;font-weight:800;width:min(470px,100%);text-align:center}
+
+.blocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px;margin-top:11px}
+.bcard{text-align:left;background:var(--card);border:1px solid var(--edge);border-left:4px solid var(--accent);border-radius:14px 15px 13px 16px;padding:11px 12px;cursor:pointer;
+  display:flex;gap:9px;align-items:center;box-shadow:var(--lift);min-height:56px}
+.bcard .st{width:26px;height:26px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:13px;background:var(--paper);border:1px solid var(--edge)}
+.bcard.done .st{background:var(--good);border-color:var(--good);color:#fff}
+.bcard .nm{font-weight:800;font-size:14.5px;line-height:1.2}
+.bcard .bl{font-size:11.5px;color:var(--ink3);font-weight:700}
+.bcard.next{box-shadow:0 0 0 3px var(--accent-soft),var(--lift)}
+.bcard.brk{border-left-color:var(--butter)}
+.sechead{display:flex;align-items:baseline;gap:9px;margin:26px 0 3px;flex-wrap:wrap}
+.sechead h3{font-size:19px}
+.sechead p{margin:0;font-size:13.5px;color:var(--ink3);font-weight:700}
+
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap;justify-content:center}
+.seg button{border:none;background:transparent;padding:11px 13px;border-radius:9px;font-weight:800;font-size:13.5px;cursor:pointer;color:var(--ink3);min-height:46px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+#quails{position:fixed;left:0;right:0;bottom:14%;height:70px;pointer-events:none;z-index:55;overflow:hidden}
+.runner{position:absolute;bottom:0;will-change:transform}
+.runner .bob{animation:bob .34s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-9px) rotate(3deg)}}
+@keyframes runR{from{transform:translateX(-110px)}to{transform:translateX(calc(100vw + 110px))}}
+@keyframes runL{from{transform:translateX(calc(100vw + 110px)) scaleX(-1)}to{transform:translateX(-110px) scaleX(-1)}}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#quails{display:none}}
+@media(max-width:400px){
+  .stage-body{padding:16px 9px 18px}
+  .wrap{padding:0 10px calc(70px + env(safe-area-inset-bottom))}
+  .brand{font-size:15px}
+  .pappe{flex:1 1 auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <a class="zurueck" href="../">← Fächer</a>
+  <div class="brand">🥚 Nest und Hand</div>
+  <span class="wer" id="werChip" hidden></span>
+  <span class="chip hot">🔥 <span id="streakN">0</span></span>
+  <span class="chip">✓ <span id="doneN">0</span>/<span id="totalN">20</span></span>
+  <button class="iconbtn" id="sound" title="Ton an/aus" aria-label="Ton an oder aus">🔊</button>
+  <div class="carton">
+    <div class="pappe" id="pappe"></div>
+    <div class="cartonlab"><b id="cartonCount">0</b>volle Pappen heute</div>
+    <div class="stackpappe" id="stackpappe"></div>
+    <span class="savechip" id="savechip" title="Dein Fortschritt wird automatisch gespeichert">💾 Gespeichert</span>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <section id="view-play">
+    <div class="spine" id="spine"></div>
+    <div class="stage">
+      <div class="stage-head">
+        <span class="icon" id="hIcon">🪹</span>
+        <div><div class="sub" id="hDay">Tag 1</div><h2 id="hBlock">Nest und Hand</h2></div>
+        <div class="pips" id="pips"></div>
+      </div>
+      <div class="stage-body" id="body"></div>
+    </div>
+    <div class="sechead"><h3 id="dayTitle">Tag 1</h3><p id="dayGoal"></p></div>
+    <div class="blocks" id="blocks"></div>
+  </section>
+</div>
+<div id="quails"></div>
+<canvas id="fx"></canvas>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const n=document.createElement(t);if(c)n.className=c;if(h!=null)n.innerHTML=h;return n;};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=(a,n)=>shuffle(a).slice(0,n);
+const fmt=n=>n.toLocaleString('de-DE');
+const dg=(n,l)=>String(n).padStart(l,'0').split('').map(Number);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PVFULL=['Einer','Zehner','Hunderter','Tausender','Zehntausender'];
+const PVN=['ZT','T','H','Z','E'];
+const UNIT=['einzelne Eier','Schachteln','Kartons','Kisten','Paletten'];
+const UNIT1=['Ei','Schachtel','Karton','Kiste','Palette'];
+const ART=['ein','eine','einen','eine','eine'];
+const HEAD=['<b>E</b><br>Eier','<b>Z</b><br>Schach.','<b>H</b><br>Kartons','<b>T</b><br>Kisten','<b>ZT</b><br>Pal.'];
+const EGGS_PER_CARTON=12;
+
+/* ---------- Ton ---------- */
+let ac=null,muted=false;
+function tone(f,t0,d,v,ty){if(muted)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+  const o=ac.createOscillator(),g=ac.createGain();o.type=ty||'sine';o.frequency.value=f;
+  g.gain.setValueAtTime(0,ac.currentTime+t0);g.gain.linearRampToValueAtTime(v,ac.currentTime+t0+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t0+d);o.connect(g);g.connect(ac.destination);
+  o.start(ac.currentTime+t0);o.stop(ac.currentTime+t0+d+.02);}
+const sGood=()=>{tone(660,0,.12,.15,'triangle');tone(880,.07,.16,.13,'triangle');};
+const sBad=()=>{tone(240,0,.15,.09);tone(190,.08,.17,.075);};
+const sTick=()=>tone(560,0,.06,.06,'sine');
+const sCrack=()=>{tone(320,0,.05,.11,'square');tone(500,.05,.09,.09,'triangle');};
+const sWin=()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*.09,.3,.14,'triangle'));};
+const sPappe=()=>{[440,554,659,880,1109].forEach((f,i)=>tone(f,i*.08,.34,.14,'triangle'));};
+
+/* ---------- Konfetti (Eier) ---------- */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],raf=null;
+const rsz=()=>{cv.width=innerWidth;cv.height=innerHeight;};rsz();addEventListener('resize',rsz);
+function burst(n,big){if(reduce)return;
+  const cs=['#FBF1DE','#D9B87C','#B08B52','#8A6E4B','#A6C4D8','#DFA49D','#EFCB85'];
+  for(let i=0;i<n;i++)parts.push({x:innerWidth/2+ri(-90,90),y:innerHeight*(big?.4:.32),vx:(Math.random()-.5)*11,vy:-Math.random()*13-4,
+    s:ri(7,13),c:cs[ri(0,cs.length-1)],r:Math.random()*6,vr:(Math.random()-.5)*.35,life:0});
+  if(!raf)raf=requestAnimationFrame(stepFx);}
+function stepFx(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.life<130);
+  parts.forEach(p=>{p.life++;p.vy+=.4;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);
+    cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,1-p.life/130);cx.beginPath();
+    cx.ellipse(0,0,p.s*.4,p.s*.55,0,0,6.3);cx.fill();cx.restore();});
+  if(parts.length)raf=requestAnimationFrame(stepFx);else{raf=null;cx.clearRect(0,0,cv.width,cv.height);}}
+
+/* ---------- laufende Wachteln ---------- */
+function quailSVG(scale,chick){
+  const s=scale||1;
+  const bodyC=chick?'#F6E2AF':'#D9BE93';
+  const wingC=chick?'#EBCC85':'#BC9E6E';
+  const headC=chick?'#F0D69B':'#C4A87C';
+  return `<svg width="${Math.round(72*s)}" height="${Math.round(54*s)}" viewBox="0 0 72 54" aria-hidden="true">
+    <ellipse cx="12" cy="29" rx="10" ry="6" fill="${bodyC}" opacity=".9" transform="rotate(-20 12 29)"/>
+    <ellipse cx="32" cy="31" rx="20" ry="15" fill="${bodyC}"/>
+    <ellipse cx="30" cy="33" rx="12" ry="8" fill="${wingC}" opacity=".8" transform="rotate(-8 30 33)"/>
+    <g fill="#8A6E4B" opacity=".45">
+      <ellipse cx="26" cy="26" rx="1.7" ry="2.3"/><ellipse cx="36" cy="24" rx="1.5" ry="2"/>
+      <ellipse cx="41" cy="32" rx="1.6" ry="2.1"/><ellipse cx="30" cy="39" rx="1.4" ry="1.9"/>
+      <ellipse cx="21" cy="34" rx="1.5" ry="2"/><ellipse cx="39" cy="39" rx="1.3" ry="1.7"/>
+    </g>
+    <circle cx="52" cy="19" r="9.5" fill="${headC}"/>
+    <path d="M50 10 Q51 2 59 1 Q53 4 53.5 10 Z" fill="#7A5F3E"/>
+    <circle cx="56" cy="17" r="1.9" fill="#3A3227"/>
+    <circle cx="56.7" cy="16.2" r="0.6" fill="#FFFFFF"/>
+    <path d="M61 20 L68 22.5 L61 25 Z" fill="#C98A46"/>
+    <path d="M45 27 Q49 30 54 28.5" stroke="#9C8055" stroke-width="1.4" fill="none" opacity=".55"/>
+    <g stroke="#C98A46" stroke-width="2.6" stroke-linecap="round">
+      <line x1="29" y1="45" x2="26" y2="52"/><line x1="38" y1="45" x2="41" y2="52"/>
+    </g>
+  </svg>`;
+}
+const qLayer=$('#quails');
+function runQuail(count,withChicks){
+  if(reduce)return;
+  const n=Math.min(count||1,5);
+  for(let i=0;i<n;i++){
+    const dir=Math.random()<.5?'runR':'runL';
+    const dur=ri(2400,3600);
+    const w=el('div','runner');
+    w.style.cssText=`animation:${dir} ${dur}ms linear forwards;bottom:${ri(0,18)}px`;
+    const b=el('div','bob'); b.innerHTML=quailSVG(ri(70,100)/100);
+    if(withChicks){ const row=el('div'); row.style.cssText='display:flex;align-items:flex-end;gap:2px';
+      row.appendChild(b);
+      for(let c=0;c<ri(2,3);c++){const ch=el('div','bob');ch.style.animationDelay=(c*90)+'ms';ch.innerHTML=quailSVG(.42,true);row.appendChild(ch);}
+      w.appendChild(row);
+    } else w.appendChild(b);
+    w.style.animationDelay=(i*230)+'ms';
+    qLayer.appendChild(w);
+    setTimeout(()=>w.remove(),dur+i*230+300);
+  }
+}
+
+/* ---------- Zustand ---------- */
+const today=()=>new Date().toISOString().slice(0,10);
+let S={done:{},tests:{},method:'ent',muted:false,started:today(),eggs:0,cartons:0,eggDay:today()};
+let streak=0,db=null,dl=null;
+let localOK=true,cloudOK=false,flashT=null;
+/* Der Übungsstand hängt am Profil, das auf der Startseite gewählt wurde.
+   Ohne Profil (App direkt aufgerufen) bleibt es beim alten gemeinsamen Schlüssel. */
+function aktuellesKind(){
+  try{ return localStorage.getItem('wex:currentKid') || null; }catch(e){ return null; }
+}
+function stateKey(){
+  const k = aktuellesKind();
+  return k ? 'nest-state:' + k : 'nest-state';
+}
+/* Zeigt oben, wer gerade übt – die Profile kommen von der Startseite. */
+function zeigeProfil(){
+  const chip=document.getElementById('werChip');
+  if(!chip) return;
+  const id=aktuellesKind();
+  if(!id){ chip.hidden=true; return; }
+  let kids=[];
+  try{ kids=JSON.parse(localStorage.getItem('wex:kids')||'[]'); }catch(e){}
+  if(!kids.length) kids=[{id:'kid-ellena',name:'Ellena',color:'#8B6FC4'},
+                         {id:'kid-merle',name:'Merle',color:'#3D6BD6'},
+                         {id:'kid-eltern',name:'Eltern',color:'#4A4750'}];
+  const k=kids.find(x=>x.id===id);
+  if(!k){ chip.hidden=true; return; }
+  chip.innerHTML='<i style="background:'+(k.color||'#8B6FC4')+'">'+(k.name||'?')[0].toUpperCase()+'</i>'+k.name;
+  chip.hidden=false;
+}
+const loadLocal=()=>{try{const r=localStorage.getItem(stateKey());if(r)Object.assign(S,JSON.parse(r));}
+  catch(e){localOK=false;}};
+const saveLocal=()=>{try{localStorage.setItem(stateKey(),JSON.stringify(S));return true;}
+  catch(e){localOK=false;return false;}};
+function saveChip(state){
+  const c=$('#savechip');if(!c)return;
+  if(state==='saving'){c.textContent='💾 speichert …';c.classList.remove('flash');return;}
+  if(state==='fail'){c.textContent='⚠️ nicht gespeichert';c.classList.remove('flash');
+    c.style.color='var(--bad)';c.style.borderColor='var(--bad)';return;}
+  c.style.color='';c.style.borderColor='';
+  c.textContent=(cloudOK?'☁️':'💾')+' Gespeichert';
+  c.classList.add('flash');
+  clearTimeout(flashT);flashT=setTimeout(()=>c.classList.remove('flash'),1400);
+}
+function save(){
+  const ok=saveLocal();
+  if(!db){saveChip(ok?'ok':'fail');return;}
+  saveChip('saving');
+  db.doc('intensiv/kind').set(S)
+    .then(()=>{cloudOK=true;saveChip('ok');})
+    .catch(()=>{cloudOK=false;saveChip(ok?'ok':'fail');});
+}
+async function connect(){try{if(!(window.claude&&claude.use))return;
+  const d=await claude.use('db');
+  if(d){db=d;
+    let s=null;try{s=await d.doc('intensiv/kind').get();cloudOK=true;}catch(e){cloudOK=false;}
+    if(s&&s.data&&s.data.done&&Object.keys(s.data.done).length>=Object.keys(S.done).length){
+      Object.assign(S,s.data);rollDay();paintSpine();paintBlocks();paintHud();paintCarton();}
+    saveChip('ok');
+    d.doc('intensiv/kind').onSnapshot&&d.doc('intensiv/kind').onSnapshot(snap=>{
+      if(!snap||!snap.data||!snap.data.done)return;
+      if(Object.keys(snap.data.done).length>Object.keys(S.done).length){
+        Object.assign(S,snap.data);rollDay();paintSpine();paintBlocks();paintHud();paintCarton();}
+    },()=>{cloudOK=false;});
+  }
+  dl=await claude.use('downloads');}catch(e){}}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveLocal();});
+addEventListener('pagehide',()=>{saveLocal();});
+function rollDay(){if(S.eggDay!==today()){S.eggDay=today();S.eggs=0;S.cartons=0;}}
+
+/* ---------- Eierpappe ---------- */
+function eiEl(){return el('div','ei');}
+function paintCarton(){
+  const p=$('#pappe');p.innerHTML='';
+  for(let i=0;i<EGGS_PER_CARTON;i++){const s=el('div','slot');
+    if(i<S.eggs)s.appendChild(eiEl());p.appendChild(s);}
+  $('#cartonCount').textContent=S.cartons;
+  const st=$('#stackpappe');st.innerHTML='';
+  for(let i=0;i<Math.min(S.cartons,6);i++)st.appendChild(el('div','mini-pappe'));
+}
+function addEgg(){
+  rollDay();
+  S.eggs++;
+  if(S.eggs>=EGGS_PER_CARTON){
+    S.eggs=0;S.cartons++;paintCarton();sPappe();burst(70,true);runQuail(4,true);
+    const f=el('div','fb ok show');
+    f.innerHTML='🎉 <b>Eine Pappe ist voll!</b> Zwölf Eier — die kann weggeräumt werden.';
+    f.style.marginTop='6px';body.appendChild(f);
+  } else {
+    paintCarton();
+    const last=$('#pappe').children[S.eggs-1];
+    if(last&&last.firstChild&&!reduce){last.firstChild.style.animation='popin .32s cubic-bezier(.2,1.6,.4,1)';}
+  }
+  save();
+}
+
+/* ---------- Aufgaben-Generatoren ---------- */
+const subOneBorrow=len=>()=>{for(let g=0;g<400;g++){const a=ri(3000,9899),b=ri(1100,a-100);
+  const A=dg(a,len),B=dg(b,len);let br=0,n=0,zero=false;
+  for(let i=len-1;i>=0;i--){const t=A[i]-br;if(t<B[i]){n++;br=1;}else br=0;}
+  A.forEach((d,i)=>{if(d===0&&i>0)zero=true;});
+  if(n===1&&!zero)return[a,b];}return[4352,1728];};
+const subMultiBorrow=len=>()=>{for(let g=0;g<400;g++){const a=ri(3000,9899),b=ri(1100,a-100);
+  const A=dg(a,len),B=dg(b,len);let br=0,n=0;
+  for(let i=len-1;i>=0;i--){const t=A[i]-br;if(t<B[i]){n++;br=1;}else br=0;}
+  if(n>=2)return[a,b];}return[5342,1768];};
+const subNoBorrow=len=>()=>{let a=0,b=0;
+  for(let i=0;i<len;i++){const lead=i===0,d1=ri(lead?2:1,9),d2=ri(lead?1:0,lead?d1-1:d1);
+    a+=d1*Math.pow(10,len-1-i);b+=d2*Math.pow(10,len-1-i);}
+  return a>b?[a,b]:[8765,4321];};
+const addNoCarry=len=>()=>{for(let g=0;g<300;g++){let a=0,b=0,ok=true;
+  for(let i=0;i<len;i++){const lead=i===0,d1=ri(lead?1:0,4),d2=ri(lead?1:0,Math.min(4,9-d1));
+    if(d1+d2>9){ok=false;break;}a+=d1*Math.pow(10,len-1-i);b+=d2*Math.pow(10,len-1-i);}
+  if(ok&&a>=1000&&b>=1000)return[a,b];}return[3214,4152];};
+const addCarry=(len,min)=>()=>{for(let g=0;g<400;g++){const a=ri(1200,8600),b=ri(1200,8600);if(a+b>9989)continue;
+  const A=dg(a,len),B=dg(b,len);let c=0,n=0;
+  for(let i=len-1;i>=0;i--){const s=A[i]+B[i]+c;if(s>=10){n++;c=1;}else c=0;}
+  if(n>=min)return[a,b];}return[1687,2456];};
+
+const VID={
+  addOhne:{id:'2OsBl4miUm0',t:'Schriftlich Plus — ohne Zehnerübergang',s:'Lehrerschmidt · so schreibt man untereinander'},
+  addMit :{id:'8vNWOmLwihw',t:'Schriftlich Plus — mit Zehnerübergang',s:'Lehrerschmidt · die volle Schachtel wandert weiter'},
+  subOhne:{id:'j3tkpAB2y2I',t:'Schriftlich Minus — ohne Zehnerübergang',s:'Lehrerschmidt · Nest oben, Hand unten'},
+  subEnt :{id:'dJCehnOA--k',t:'Schriftlich Minus — mit Zehnerübergang (Abziehverfahren)',s:'Lehrerschmidt · genau unser „Schachtel aufmachen"'},
+  subErg :{id:'w7WDhAEMBKU',t:'Schriftlich Minus — mit Zehnerübergang (Ergänzungsverfahren)',s:'Lehrerschmidt · Auffüllen, die 1 unten merken'}
+};
+
+function zeroA(){for(let g=0;g<300;g++){const t=ri(2,9),z=ri(1,3),e=ri(0,5),a=t*1000+z*10+e;
+  const b=ri(1,t-1)*1000+ri(2,9)*100+ri(z+1,9)*10+ri(e+1,9);if(a>b)return[a,b];}return[4021,3987];}
+function zeroB(){for(let g=0;g<300;g++){const t=ri(3,9),e=ri(0,5),a=t*1000+e;
+  const b=ri(1,t-1)*1000+ri(1,9)*100+ri(1,9)*10+ri(e+1,9);if(a>b)return[a,b];}return[5003,1897];}
+function zeroC(){for(let g=0;g<300;g++){const t=ri(2,9),h=ri(1,9),e=ri(0,5),a=t*1000+h*100+e;
+  const b=ri(1,t)*1000+ri(0,h-1)*100+ri(1,8)*10+ri(e+1,9);if(a>b)return[a,b];}return[4302,1876];}
+function zeroSet(n){const forms=shuffle([zeroA,zeroB,zeroC]),out=[];
+  for(let i=0;i<n;i++)out.push(forms[i%3]());return out;}
+const pt=(x,op)=>({a:x[0],b:x[1],op});
+
+const genNear=()=>{const a=ri(2100,9800);return[a,a-ri(4,58)];};
+const genMid =()=>{const a=ri(2000,9000);return[a,a-ri(Math.round(a*.1),Math.round(a*.3))];};
+const genHuge=()=>{const a=ri(2100,9800);return[a,ri(15,Math.floor(a*.12))];};
+const pairOf=(x,s)=>({a:x[0],b:x[1],s});
+function makePairs(n){
+  const out=[pairOf(genNear(),'winzig')];
+  const rest=[pairOf(genHuge(),'riesig'),pairOf(genNear(),'winzig'),pairOf(genMid(),'mittel'),
+              pairOf(genHuge(),'riesig'),pairOf(genMid(),'mittel'),pairOf(genNear(),'winzig'),
+              pairOf(genMid(),'mittel'),pairOf(genHuge(),'riesig')];
+  return out.concat(shuffle(rest)).slice(0,n);}
+const SIZEOPTS=['winzig — fast gleich viele Eier','mittel','riesig'];
+const SIZEIDX={winzig:0,mittel:1,riesig:2};
+function makeNest(n){const out=[];
+  for(let i=0;i<n;i++){const mode=i%3===0?'who':'swap';
+    if(i%2)out.push({a:ri(1100,4800),b:ri(1100,4800),op:'+',mode});
+    else{const x=Math.random()<.55?genNear():genMid();out.push({a:x[0],b:x[1],op:'-',mode});}}
+  return shuffle(out);}
+function makeCmp(n){const out=[];
+  for(let i=0;i<n;i++){const x=i%3===0?genNear():i%3===1?genMid():genHuge();
+    out.push(Math.random()<.5?{a:x[0],b:x[1]}:{a:x[1],b:x[0]});}
+  return out;}
+function makePlace(n){const out=[];
+  while(out.length<n){const v=ri(1005,9899);if(!out.some(o=>o.n===v))out.push({n:v});}
+  out[1]={n:ri(2,9)*1000+ri(1,4)*10+ri(0,6)};
+  return out;}
+function makeUeber(n){const out=[];
+  for(let i=0;i<n;i++){
+    if(i%2===0){const x=genNear();out.push({a:x[0],b:x[1],op:'-',right:0,
+      why:`${fmt(Math.round(x[0]/1000)*1000)} − ${fmt(Math.round(x[1]/1000)*1000)} = 0 → das Ergebnis ist <b>winzig</b> (${fmt(x[0]-x[1])}).`});}
+    else{const x=genMid(),r=Math.round((x[0]-x[1])/1000)*1000;
+      out.push({a:x[0],b:x[1],op:'-',right:r>=1000?2:1,
+        why:`Überschlag: ${fmt(Math.round(x[0]/100)*100)} − ${fmt(Math.round(x[1]/100)*100)} ≈ <b>${fmt(Math.round(x[0]/100)*100-Math.round(x[1]/100)*100)}</b>.`});}}
+  return shuffle(out);}
+const UEBOPTS=['fast nichts — nahe 0','ein paar hundert','über tausend'];
+
+/* ---------- Story ---------- */
+const STORY=[
+  {t:'Das ist ein Nest.',b:'Darin liegen Eier. Das Nest <b>steht</b> — es läuft nicht weg und es nimmt nichts.',v:'nest'},
+  {t:'Das ist die Hand.',b:'Sie kommt und <b>nimmt Eier heraus</b>. Zum Backen, zum Frühstück. Danach sind weniger im Nest.',v:'hand'},
+  {t:'Beim Minus gilt immer:',b:'Oben steht das <b>Nest</b> (die große Zahl). Unten steht die <b>Hand</b> (was weggenommen wird).',v:'both'},
+  {t:'Und andersherum?',b:'Kann das <b>Nest</b> etwas aus der <b>Hand</b> nehmen? Nein — ein Nest greift nicht.<br>Genau deshalb darf man beim <b>Minus niemals tauschen</b>.',v:'swapped'},
+  {t:'Beim Plus ist es anders.',b:'Da sind es <b>zwei Nester</b>, die zusammengeschüttet werden. Egal welches du zuerst nimmst — es kommt dasselbe heraus. Beim <b>Plus darfst du tauschen</b>.',v:'plus'},
+  {t:'Und wenn Eier fehlen?',b:'10 einzelne Eier passen in eine <b>Schachtel</b>. 10 Schachteln in einen <b>Karton</b>. 10 Kartons in eine <b>Kiste</b>.<br>Zu wenig einzelne Eier? Dann <b>machst du eine Schachtel auf</b>. Zu viele — zehn oder mehr? Dann <b>packst du eine Schachtel voll</b>. Das ist das ganze Geheimnis.',v:'mat'}
+];
+function makeStory(){const p=genNear();
+  return STORY.map(s=>({...s,a:p[0],b:p[1],p1:ri(1200,2600),p2:ri(1200,2600)}));}
+
+/* ---------- Tage ---------- */
+const DAYS=[
+  {t:'Nest und Hand',goal:'ca. 2 Stunden mit Pausen · Ziel: der Zehnerübergang — einpacken und aufmachen.',icon:'🪹',blocks:[
+    {id:'d1v',n:'Zum Anschauen',bl:'2 Videos · ca. 9 Min',k:'video',mk:()=>[{v:[VID.addMit,S.method==='erg'?VID.subErg:VID.subEnt],methodSwitch:true,
+      extra:[VID.addOhne,VID.subOhne],
+      note:'Heute geht es um den <b>Zehnerübergang</b>. Beim Plus wird eine Schachtel <b>voll</b> und wandert weiter. Beim Minus fehlen Eier, also musst du eine Schachtel <b>aufmachen</b>.'}]},
+    {id:'d1s',n:'Die Wachtel-Regel',bl:'6 Bilder · ca. 5 Min',k:'story',mk:makeStory},
+    {id:'d1a',n:'Zwei Nester vergleichen',bl:'6 Aufgaben · ca. 8 Min',k:'eier',mk:()=>makePairs(6)},
+    {id:'d1g',n:'Wer hat mehr?',bl:'8 Aufgaben · ca. 6 Min',k:'cmp',pause:true,mk:()=>makeCmp(8)},
+    {id:'d1z',n:'Kisten, Kartons, Schachteln',bl:'5 Aufgaben · ca. 8 Min',k:'place',mk:()=>makePlace(5)},
+    {id:'d1c',n:'Nest oder Hand?',bl:'10 Aufgaben · ca. 8 Min',k:'nest',mk:()=>makeNest(10)},
+    {id:'d1u',n:'Passt das ungefähr?',bl:'6 Aufgaben · ca. 6 Min',k:'ueber',pause:true,mk:()=>makeUeber(6)},
+    {id:'d1w',n:'Aufwärmen ohne Übergang',bl:'4 Aufgaben · ca. 9 Min',k:'col',mk:()=>{const gp=addNoCarry(4),gm=subNoBorrow(4);
+      return shuffle([pt(gp(),'+'),pt(gp(),'+'),pt(gm(),'-'),pt(gm(),'-')]);}},
+    {id:'d1p',n:'Plus: Schachtel vollmachen',bl:'3 Aufgaben, geführt · ca. 12 Min',k:'guided',mk:()=>{const g=addCarry(4,2);return[0,1,2].map(()=>pt(g(),'+'));}},
+    {id:'d1m',n:'Minus: Schachtel aufmachen',bl:'3 Aufgaben, geführt · ca. 13 Min',k:'guided',pause:true,mk:()=>{const g=subOneBorrow(4);return[0,1,2].map(()=>pt(g(),'-'));}},
+    {id:'d1f',n:'Jetzt du allein',bl:'5 Aufgaben mit Übergang · ca. 14 Min',k:'col',mk:()=>{const gp=addCarry(4,2),gm=subOneBorrow(4);
+      return shuffle([pt(gp(),'+'),pt(gp(),'+'),pt(gm(),'-'),pt(gm(),'-'),pt(gm(),'-')]);}},
+    {id:'d1t',n:'Tagestest',bl:'6 Aufgaben · wird gespeichert',k:'test',day:0}
+  ]},
+  {t:'Mehr Überträge',goal:'ca. 1 Stunde · Ziel: auch mehrere Überträge hintereinander sitzen sicher.',icon:'🥚',blocks:[
+    {id:'d2w',n:'Eier abzählen',bl:'5 Aufgaben · ca. 9 Min',k:'malen',mk:()=>pick([14,23,31,38,45,52,58,67,74,86,93],5).map(n=>({n}))},
+    {id:'d2a',n:'Mehrere Überträge, geführt',bl:'3 Aufgaben · ca. 12 Min',k:'guided',mk:()=>{const gp=addCarry(4,3),gm=subMultiBorrow(4);
+      return shuffle([pt(gp(),'+'),pt(gm(),'-'),pt(gm(),'-')]);}},
+    {id:'d2b',n:'Jetzt du allein',bl:'5 Aufgaben · ca. 13 Min',k:'col',pause:true,mk:()=>{const gp=addCarry(4,3),gm=subMultiBorrow(4);
+      return shuffle([pt(gp(),'+'),pt(gp(),'+'),pt(gm(),'-'),pt(gm(),'-'),pt(gm(),'-')]);}},
+    {id:'d2c',n:'Die Probe',bl:'4 Aufgaben · ca. 8 Min',k:'col',probe:true,mk:()=>{const gp=addCarry(4,2),gm=subMultiBorrow(4);
+      return shuffle([pt(gp(),'+'),pt(gm(),'-'),pt(gm(),'-'),pt(gp(),'+')]);}},
+    {id:'d2t',n:'Tagestest',bl:'5 Aufgaben · wird gespeichert',k:'test',day:1}
+  ]},
+  {t:'Das leere Regal',goal:'ca. 45 Min · Ziel: „Auch ohne Karton weiß ich, was zu tun ist."',icon:'📦',blocks:[
+    {id:'d3a',n:'Der Nullen-Knacker',bl:'3 Aufgaben, geführt · ca. 14 Min',k:'guided',pause:true,mk:()=>zeroSet(3).map(x=>pt(x,'-'))},
+    {id:'d3b',n:'Nullen allein knacken',bl:'4 Aufgaben · ca. 12 Min',k:'col',mk:()=>zeroSet(4).map(x=>pt(x,'-'))},
+    {id:'d3c',n:'Probe bei Nullen',bl:'3 Aufgaben · ca. 6 Min',k:'col',probe:true,mk:()=>zeroSet(3).map(x=>pt(x,'-'))},
+    {id:'d3t',n:'Tagestest',bl:'5 Aufgaben · wird gespeichert',k:'test',day:2}
+  ]},
+  {t:'Sitzt es?',goal:'ca. 50 Min · alles zusammen — und der Beweis, dass es hält.',icon:'🏁',blocks:[
+    {id:'d4a',n:'Nest-Blitz',bl:'10 Aufgaben · ca. 5 Min',k:'nest',mk:()=>makeNest(10)},
+    {id:'d4b',n:'Alles gemischt',bl:'6 Aufgaben · ca. 16 Min',k:'col',pause:true,mk:()=>{const g=subMultiBorrow(4),gp=addCarry(4,2);
+      return shuffle(zeroSet(2).map(x=>pt(x,'-')).concat([pt(g(),'-'),pt(g(),'-'),pt(gp(),'+'),pt(gp(),'+')]));}},
+    {id:'d4c',n:'Papier-Block',bl:'12 Aufgaben fürs Heft',k:'paper'},
+    {id:'d4t',n:'Abschlusstest',bl:'6 Aufgaben · wird gespeichert',k:'test',day:3,n6:true}
+  ]}
+];
+const ALLB=[];DAYS.forEach((d,di)=>d.blocks.forEach(b=>{b.d=di;ALLB.push(b);}));
+const byId=id=>ALLB.find(b=>b.id===id);
+const WD=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+function dayLabel(i){const d=new Date(S.started+'T12:00:00');d.setDate(d.getDate()+i);
+  return{wd:WD[d.getDay()],dm:d.getDate()+'.'+(d.getMonth()+1)+'.'};}
+
+/* ---------- Material ---------- */
+function schachtelEl(){const s=el('div','schachtel');for(let i=0;i<10;i++)s.appendChild(el('i'));return s;}
+function matFor(n){const d=dg(n,4),w=el('div','stack');
+  const grp=(mk,c,lab)=>{if(!c)return;const g=el('div','matgroup');
+    for(let i=0;i<c;i++)g.appendChild(mk());g.appendChild(el('div','matlabel',lab));w.appendChild(g);};
+  grp(()=>el('div','kiste'),d[0],'KISTEN à 1000');
+  grp(()=>el('div','karton'),d[1],'KARTONS à 100');
+  grp(schachtelEl,d[2],'SCHACHTELN à 10');
+  grp(eiEl,d[3],'EINZELNE EIER');
+  return w;}
+function nestEl(count,cap){const n=el('div','nest');
+  for(let i=0;i<Math.min(count,cap||12);i++)n.appendChild(eiEl());return n;}
+function roleCol(label,num,inner){const c=el('div','scenecol');
+  c.appendChild(inner);c.appendChild(el('div','rolelab',label));c.appendChild(el('div','rolenum',fmt(num)));return c;}
+function handCol(num){const h=el('div','handbox');h.appendChild(el('div','h','✋'));
+  return roleCol('Die Hand nimmt',num,h);}
+
+/* ---------- Motor ---------- */
+let cur=null;const body=$('#body');
+function paintHud(){$('#streakN').textContent=streak;
+  $('#doneN').textContent=ALLB.filter(b=>S.done[b.id]).length;
+  $('#totalN').textContent=ALLB.length;
+  $('#sound').textContent=S.muted?'🔇':'🔊';muted=S.muted;}
+function paintSpine(){const sp=$('#spine');sp.innerHTML='';
+  DAYS.forEach((d,i)=>{const nd=d.blocks.filter(b=>S.done[b.id]).length,tot=d.blocks.length;
+    const b=el('button','day'+(nd===tot?' full':''));
+    if(cur&&cur.blk.d===i)b.setAttribute('aria-current','true');
+    b.innerHTML=`<div class="dn">Tag ${i+1} · ${dayLabel(i).wd}</div><div class="dt">${d.t}</div><div class="dp">${nd}/${tot} geschafft${S.tests[i]?` · Test ${S.tests[i].r}/${S.tests[i].t}`:''}</div>`;
+    b.onclick=()=>{const nx=d.blocks.find(x=>!S.done[x.id])||d.blocks[0];start(nx.id);};
+    sp.appendChild(b);});}
+function paintBlocks(){const di=cur?cur.blk.d:0,d=DAYS[di];
+  $('#dayTitle').textContent=`Tag ${di+1} · ${d.t}`;$('#dayGoal').textContent=d.goal;
+  const g=$('#blocks');g.innerHTML='';
+  const nid=(ALLB.find(b=>!S.done[b.id])||ALLB[0]).id;
+  d.blocks.forEach(b=>{const done=!!S.done[b.id];
+    const c=el('button','bcard'+(done?' done':'')+(b.id===nid?' next':'')+(b.pause?' brk':''));
+    c.innerHTML=`<span class="st">${done?'✓':'·'}</span><span><span class="nm">${b.n}</span><br><span class="bl">${b.bl}${b.pause?' · dann Pause':''}</span></span>`;
+    c.onclick=()=>start(b.id);g.appendChild(c);});}
+function start(id){const blk=byId(id);
+  cur={blk,tasks:blk.k==='test'?makeTest(blk):(blk.mk?blk.mk():[]),i:0,right:0,firstTry:true};
+  $('#hIcon').textContent=DAYS[blk.d].icon;
+  $('#hDay').textContent=`Tag ${blk.d+1} · ${dayLabel(blk.d).wd}`;
+  $('#hBlock').textContent=blk.n;
+  paintSpine();paintBlocks();
+  if(blk.k==='paper'){rPaper();return;}
+  render();$('#view-play').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+function pips(){const p=$('#pips');p.innerHTML='';
+  cur.tasks.forEach((_,i)=>p.appendChild(el('span','pip '+(i<cur.i?'done':i===cur.i?'now':''))));}
+function render(){pips();cur.firstTry=true;body.innerHTML='';
+  const t=cur.tasks[cur.i];
+  ({story:rStory,video:rVideo,eier:rEier,cmp:rCmp,malen:rMalen,place:rPlace,nest:rNest,
+    ueber:rUeber,col:rCol,guided:rGuided,test:rTest})[cur.blk.k](t);}
+function done(){cur.i++;
+  if(cur.i>=cur.tasks.length){S.done[cur.blk.id]=true;save();paintHud();paintSpine();paintBlocks();return finish();}
+  save();render();}
+function fbBox(){const f=el('div','fb');body.appendChild(f);return f;}
+function nextBtn(label){const r=el('div','btnrow'),b=el('button','btn',label||'Weiter →');
+  b.onclick=done;r.appendChild(b);body.appendChild(r);b.focus();}
+function good(noEgg){if(cur.firstTry){streak++;cur.right++;}else streak=0;paintHud();sGood();
+  if(!noEgg)addEgg();
+  runQuail(streak>=6?3:1, streak>=6);
+  if(streak&&streak%5===0)burst(45);}
+function bad(){cur.firstTry=false;streak=0;paintHud();sBad();}
+const PRAISE=['Stark!','Genau!','Sitzt!','Perfekt!','Sauber!','Volltreffer!','Klasse!'];
+const P=()=>PRAISE[ri(0,PRAISE.length-1)];
+const SER=()=>streak>=9?' 🔥🔥🔥 Neunerserie!':streak>=6?' 🔥🔥 Sechserserie!':streak>=3?' 🔥 Dreierserie!':'';
+
+/* ---------- Spaltendarstellung ---------- */
+function colDom(o){const{len,orig,top,B,res,under,carry,pos,phase,showUnder,focusTop,op}=o;
+  const plus=op==='+';
+  const calc=el('div','calc');
+  const h=el('div','pvhead');h.appendChild(el('span','',''));
+  for(let i=len-1;i>=0;i--)h.appendChild(el('span','',HEAD[i]));
+  calc.appendChild(h);
+  if(plus){const cr=el('div','crow');cr.appendChild(el('div','cell blank mini',''));
+    for(let i=len-1;i>=0;i--){const c=el('div','cell mini');c.textContent=carry&&carry[i]?'1':'';cr.appendChild(c);}
+    calc.appendChild(cr);}
+  const r1=el('div','crow');r1.appendChild(el('div','cell blank',''));
+  for(let i=len-1;i>=0;i--){const c=el('div','cell');
+    if(plus||top[i]===orig[i])c.textContent=orig[i];else c.innerHTML=`<s>${orig[i]}</s><em class="fix">${top[i]}</em>`;
+    if(focusTop&&i===pos)c.classList.add('focusnow');r1.appendChild(c);}
+  calc.appendChild(r1);
+  const r2=el('div','crow');r2.appendChild(el('div','cell blank op',plus?'+':'−'));
+  for(let i=len-1;i>=0;i--){const c=el('div','cell');c.textContent=B[i];
+    if(showUnder&&under&&under[i])c.appendChild(el('span','lend','1'));
+    if(focusTop&&i===pos)c.classList.add('focusnow');r2.appendChild(c);}
+  calc.appendChild(r2);calc.appendChild(el('div','rulebar'));
+  const r3=el('div','crow');r3.appendChild(el('div','cell blank',''));
+  for(let i=len-1;i>=0;i--){const c=el('div','cell slot2'+(res[i]!=null?' filled':'')+(i===pos&&phase==='digit'?' active':''));
+    c.textContent=res[i]!=null?res[i]:'';if(i===pos)c.id='activeCell';r3.appendChild(c);}
+  calc.appendChild(r3);return calc;}
+function keypad(onKey,extra){const pad=el('div','keypad');
+  for(let i=1;i<=9;i++){const k=el('button','key',String(i));k.onclick=()=>onKey(i);pad.appendChild(k);}
+  const k0=el('button','key','0');k0.onclick=()=>onKey(0);pad.appendChild(k0);
+  pad.appendChild(extra||el('div'));
+  const h=e=>{if(/^[0-9]$/.test(e.key))onKey(Number(e.key));};
+  document.addEventListener('keydown',h);
+  const ob=new MutationObserver(()=>{if(!document.body.contains(pad)){document.removeEventListener('keydown',h);ob.disconnect();}});
+  ob.observe(body,{childList:true});return pad;}
+function shakeActive(){const c=$('#activeCell');if(c){c.classList.add('wrongshake');setTimeout(()=>c.classList.remove('wrongshake'),400);}}
+function borrowChain(top,pos,len){let k=pos+1;while(k<len&&top[k]===0)k++;if(k>=len)return null;
+  const zeros=[];top[k]-=1;for(let j=k-1;j>pos;j--){top[j]=9;zeros.push(j);}top[pos]+=10;return{k,zeros};}
+
+/* ---------- Renderer ---------- */
+function rVideo(t){
+  body.appendChild(el('div','step','Erst anschauen, dann üben'));
+  body.appendChild(el('div','ask','Zwei kurze Videos'));
+  body.appendChild(el('div','hintline',t.note));
+  t.v.forEach(v=>{const a=el('a','bigvid');
+    a.href=`https://www.youtube.com/watch?v=${v.id}`;a.target='_blank';a.rel='noopener';
+    a.innerHTML=`<span class="pl">▶</span><span><span class="t">${v.t}</span><span class="s">${v.s}</span></span><span class="go">↗</span>`;
+    body.appendChild(a);});
+  if(t.extra&&t.extra.length){
+    const d=el('details');
+    d.style.cssText='width:min(480px,100%);font-size:13.5px';
+    d.innerHTML='<summary style="cursor:pointer;color:var(--ink3);font-weight:800;padding:8px 2px">Zu schnell? Hier nochmal ganz von vorne</summary>';
+    t.extra.forEach(v=>{const a=el('a','bigvid');
+      a.style.marginTop='7px';
+      a.href=`https://www.youtube.com/watch?v=${v.id}`;a.target='_blank';a.rel='noopener';
+      a.innerHTML=`<span class="pl">▶</span><span><span class="t">${v.t}</span><span class="s">${v.s}</span></span><span class="go">↗</span>`;
+      d.appendChild(a);});
+    body.appendChild(d);}
+  if(t.methodSwitch){const sw=el('div');sw.style.textAlign='center';
+    sw.innerHTML=`<div class="hintline" style="margin-bottom:5px">Welches Minus-Verfahren macht ihr in der Schule?</div>
+      <span class="seg"><button data-m="ent" aria-pressed="${S.method==='ent'}">Abziehen / Entbündeln</button><button data-m="erg" aria-pressed="${S.method==='erg'}">Ergänzen / Erweitern</button></span>`;
+    sw.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.method=b.dataset.m;save();cur.tasks=cur.blk.mk();render();});
+    body.appendChild(sw);}
+  nextBtn('Hab ich geschaut →');
+}
+function rStory(t){
+  body.appendChild(el('div','step',`Bild ${cur.i+1} von ${cur.tasks.length}`));
+  body.appendChild(el('div','ask',t.t));
+  const sc=el('div','scene');
+  if(t.v==='nest')sc.appendChild(roleCol('Das Nest steht',t.a,nestEl(12)));
+  if(t.v==='hand')sc.appendChild(handCol(t.b));
+  if(t.v==='both'||t.v==='swapped'){const first=t.v==='both';
+    const A=first?roleCol('Das Nest steht',t.a,nestEl(12)):roleCol('Das Nest steht',t.b,nestEl(9));
+    const B=first?handCol(t.b):handCol(t.a);
+    if(first){sc.appendChild(A);sc.appendChild(el('div','arrow','←'));sc.appendChild(B);}
+    else{const box=el('div','scenecol crossed');box.appendChild(B);sc.appendChild(A);sc.appendChild(el('div','arrow','→'));sc.appendChild(box);}}
+  if(t.v==='plus'){sc.appendChild(roleCol('Nest 1',t.p1,nestEl(8)));
+    sc.appendChild(el('div','arrow','+'));sc.appendChild(roleCol('Nest 2',t.p2,nestEl(11)));}
+  if(t.v==='mat'){const g=el('div','stack');
+    [['kiste','1 KISTE = 1000'],['karton','1 KARTON = 100']].forEach(([c,l])=>{
+      const w=el('div','matgroup');w.appendChild(el('div',c));w.appendChild(el('div','matlabel',l));g.appendChild(w);});
+    const s=el('div','matgroup');s.appendChild(schachtelEl());s.appendChild(el('div','matlabel','1 SCHACHTEL = 10'));g.appendChild(s);
+    const e=el('div','matgroup');e.appendChild(eiEl());e.appendChild(el('div','matlabel','1 EI = 1'));g.appendChild(e);
+    sc.appendChild(g);}
+  body.appendChild(sc);
+  body.appendChild(el('div','hintline',t.b));
+  const f=el('div','fb');body.appendChild(f);
+  if(cur.i===cur.tasks.length-1){good();f.className='fb ok show';
+    f.innerHTML='Merk dir die zwei Sätze:<br>👉 <b>Beim Minus steht das Nest oben. Nie tauschen.</b><br>👉 <b>Zu wenig? Aufmachen. Zehn voll? Einpacken.</b>';}
+  nextBtn(cur.i===cur.tasks.length-1?'Los geht’s →':'Weiter →');
+}
+function rEier(t){
+  body.appendChild(el('div','ask','Zwei Nester. Wie groß ist der Unterschied?'));
+  const ps=el('div','piles');
+  [t.a,t.b].forEach((v,k)=>{const p=el('div','pile');
+    p.appendChild(el('div','pilename',fmt(v)));p.appendChild(matFor(v));ps.appendChild(p);
+    if(k===0)ps.appendChild(el('div','vs','und'));});
+  body.appendChild(ps);
+  const box=el('div','opts');body.appendChild(box);
+  const diff=el('div','diffbox');body.appendChild(diff);
+  const f=fbBox(),right=SIZEIDX[t.s],d=Math.abs(t.a-t.b);
+  SIZEOPTS.forEach((o,i)=>{const b=el('button','opt',`<span class="mark">${'ABC'[i]}</span><span>${o}</span>`);
+    b.onclick=()=>{if(i===right){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();
+        diff.classList.add('show');
+        diff.appendChild(el('div','dl','So viele Eier Unterschied'));
+        diff.appendChild(el('div','pilename',fmt(d)));diff.appendChild(matFor(d));
+        const bp=el('div','barpair'),mx=Math.max(t.a,t.b);
+        [[t.a,'--sage'],[t.b,'--sky']].forEach(([v,c])=>{const r=el('div','barrow');
+          r.appendChild(el('div','lab',fmt(v)));const tr=el('div','bartrack'),fi=el('div','barfill');
+          fi.style.background=`var(${c})`;fi.style.width='0%';tr.appendChild(fi);r.appendChild(tr);bp.appendChild(r);
+          requestAnimationFrame(()=>fi.style.width=(v/mx*100)+'%');});
+        diff.appendChild(bp);
+        f.className='fb ok show';
+        f.innerHTML=`<b>${P()}</b>${SER()}<br>${fmt(t.a)} − ${fmt(t.b)} = <b>${fmt(d)}</b>. ${t.s==='winzig'?'Beide Nester sehen fast gleich voll aus — deshalb muss das Ergebnis <b>klein</b> sein.':t.s==='riesig'?'Ein Nest ist viel voller — deshalb ist das Ergebnis <b>groß</b>.':'Ein deutlicher, aber kein riesiger Unterschied.'}`;
+        nextBtn();}
+      else{b.classList.add('wrong');b.disabled=true;bad();
+        f.className='fb no show';f.innerHTML='Schau zuerst auf die <b>Kisten</b>. Sind es gleich viele? Dann kann der Unterschied gar nicht groß sein.';}};
+    box.appendChild(b);});
+}
+function rCmp(t){
+  body.appendChild(el('div','step',`Aufgabe ${cur.i+1} von ${cur.tasks.length}`));
+  body.appendChild(el('div','ask','Welches Nest hat mehr Eier?'));
+  const box=el('div','opts two');body.appendChild(box);
+  const f=fbBox();
+  const right=t.a>t.b?0:1;
+  [t.a,t.b].forEach((v,i)=>{const b=el('button','opt',`<span style="font-family:'Baloo 2';font-size:clamp(22px,7vw,30px);font-weight:600">${fmt(v)}</span>`);
+    b.onclick=()=>{if(i===right){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();
+        f.className='fb ok show';
+        f.innerHTML=`<b>${P()}</b>${SER()}<br>Unterschied: <b>${fmt(Math.abs(t.a-t.b))}</b> Eier.`;
+        nextBtn();}
+      else{b.classList.add('wrong');b.disabled=true;bad();
+        f.className='fb no show';f.innerHTML='Vergleiche von <b>links nach rechts</b>: erst die Kisten, dann die Kartons, dann die Schachteln.';}};
+    box.appendChild(b);});
+}
+function rMalen(t){
+  body.appendChild(el('div','ask',`Leg genau <b>${t.n}</b> Eier ins Regal`));
+  body.appendChild(el('div','hintline','Tippen oder mit dem Finger drüberziehen. Eine volle Reihe sind 10 — also eine Schachtel.'));
+  const cnt=el('div','counter',`<b>0</b> von ${t.n}`);body.appendChild(cnt);
+  const fld=el('div','hfield'),on=new Array(100).fill(false);let paint=false;
+  const upd=()=>{cnt.innerHTML=`<b>${on.filter(Boolean).length}</b> von ${t.n}`;};
+  for(let i=0;i<100;i++){const s=el('div','sq');
+    const set=v=>{if(on[i]===v)return;on[i]=v;s.classList.toggle('on',v);sTick();upd();};
+    s.addEventListener('pointerdown',e=>{e.preventDefault();paint=true;set(!on[i]);});
+    s.addEventListener('pointerenter',()=>{if(paint)set(true);});
+    fld.appendChild(s);}
+  addEventListener('pointerup',()=>{paint=false;});
+  body.appendChild(fld);
+  const f=fbBox(),r=el('div','btnrow'),chk=el('button','btn','Fertig');
+  r.appendChild(chk);body.appendChild(r);
+  chk.onclick=()=>{const c=on.filter(Boolean).length;
+    if(c===t.n){chk.remove();good();f.className='fb ok show';
+      f.innerHTML=`<b>${P()}</b>${SER()}<br>So viel ist <b>${t.n}</b> — das sind ${Math.floor(t.n/10)} volle Schachteln und ${t.n%10} einzelne Eier.`;
+      nextBtn();}
+    else{bad();f.className='fb no show';f.innerHTML=`Du hast <b>${c}</b> gelegt, gebraucht werden <b>${t.n}</b>. Zähl in Zehnerschritten.`;}};
+}
+function rPlace(t){
+  body.appendChild(el('div','ask',`Wie packst du <b>${fmt(t.n)}</b> Eier?`));
+  body.appendChild(el('div','hintline','Trag ein, wie viele Kisten, Kartons, Schachteln und einzelne Eier das sind.'));
+  const ds=dg(t.n,4),labs=['Kisten<br>à 1000','Kartons<br>à 100','Schachteln<br>à 10','einzelne<br>Eier'];
+  const tb=el('table','pvt'),hr=el('tr'),br=el('tr'),ins=[];
+  labs.forEach((lab,i)=>{hr.appendChild(el('th',null,lab));
+    const td=el('td'),inp=el('input');
+    inp.type='text';inp.inputMode='numeric';inp.maxLength=1;inp.setAttribute('aria-label',lab.replace(/<br>/g,' '));
+    inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'');if(inp.value&&ins[i+1])ins[i+1].focus();};
+    ins.push(inp);td.appendChild(inp);br.appendChild(td);});
+  tb.appendChild(hr);tb.appendChild(br);body.appendChild(tb);
+  const f=fbBox(),r=el('div','btnrow'),chk=el('button','btn','Prüfen');
+  r.appendChild(chk);body.appendChild(r);
+  chk.onclick=()=>{let all=true;
+    ins.forEach((inp,i)=>{const ok=inp.value!==''&&Number(inp.value)===ds[i];inp.className=ok?'ok':'no';if(!ok)all=false;});
+    if(all){ins.forEach(i=>i.disabled=true);chk.remove();good();
+      f.className='fb ok show';
+      f.innerHTML=`<b>${P()}</b>${SER()}<br>${fmt(t.n)} = ${ds[0]} Kisten + ${ds[1]} Kartons + ${ds[2]} Schachteln + ${ds[3]} Eier.${ds.includes(0)?' Ein leeres Fach bekommt eine <b>0</b> — es wird nie weggelassen.':''}`;
+      nextBtn();}
+    else{bad();f.className='fb no show';
+      f.innerHTML='Rot stimmt noch nicht. Lies die Zahl langsam von links: Kisten, Kartons, Schachteln, Eier — <b>auch leere Fächer</b> zählen mit.';}};
+  ins[0].focus();
+}
+function rNest(t){
+  const big=Math.max(t.a,t.b),small=Math.min(t.a,t.b);
+  body.appendChild(el('div','step',`Aufgabe ${cur.i+1} von ${cur.tasks.length}`));
+  const eq=el('div',null,`<span style="font-family:'Baloo 2';font-size:clamp(24px,7.5vw,38px);font-weight:600">${fmt(t.a)} ${t.op==='+'?'+':'−'} ${fmt(t.b)}</span>`);
+  eq.style.textAlign='center';
+  const box=el('div','opts'+(t.mode==='swap'?' two':'')),f=el('div','fb'),scene=el('div','scene');
+  if(t.mode==='who'&&t.op==='-'){
+    body.appendChild(el('div','ask','Wer ist das Nest, wer ist die Hand?'));
+    body.appendChild(eq);body.appendChild(box);body.appendChild(scene);body.appendChild(f);
+    const right=t.a>t.b?0:1;
+    [`Nest: ${fmt(t.a)} · Hand: ${fmt(t.b)}`,`Nest: ${fmt(t.b)} · Hand: ${fmt(t.a)}`].forEach((lab,i)=>{
+      const b=el('button','opt',`<span class="mark">${'AB'[i]}</span><span>${lab}</span>`);
+      b.onclick=()=>{if(i===right){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();
+          scene.appendChild(roleCol('Das Nest steht',big,nestEl(12)));
+          scene.appendChild(el('div','arrow','←'));scene.appendChild(handCol(small));
+          f.className='fb ok show';
+          f.innerHTML=`<b>${P()}</b>${SER()}<br>Die <b>größere</b> Zahl ist immer das Nest und steht oben. Übrig bleiben <b>${fmt(big-small)}</b>.`;
+          nextBtn();}
+        else{b.classList.add('wrong');b.disabled=true;bad();
+          f.className='fb no show';f.innerHTML=`Andersherum. Aus einem Nest mit ${fmt(small)} Eiern kann die Hand keine ${fmt(big)} nehmen.`;}};
+      box.appendChild(b);});
+    return;}
+  body.appendChild(el('div','ask','Darf man hier tauschen?'));
+  body.appendChild(eq);body.appendChild(box);body.appendChild(scene);body.appendChild(f);
+  const ok=t.op==='+';
+  [['Ja ✓',true],['Nein ✗',false]].forEach(([lab,v])=>{
+    const b=el('button','opt',`<span>${lab}</span>`);
+    b.onclick=()=>{if(v===ok){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();
+        if(ok){scene.appendChild(roleCol('Nest 1',t.a,nestEl(9)));scene.appendChild(el('div','arrow','+'));
+          scene.appendChild(roleCol('Nest 2',t.b,nestEl(11)));}
+        else{scene.appendChild(roleCol('Das Nest steht',big,nestEl(12)));scene.appendChild(el('div','arrow','←'));
+          scene.appendChild(handCol(small));}
+        f.className='fb ok show';
+        f.innerHTML=`<b>${P()}</b>${SER()}<br>${ok?'Zwei <b>Nester</b> werden zusammengeschüttet — egal, welches zuerst.':'Ein <b>Nest</b> und eine <b>Hand</b>. Das Nest kann nichts aus der Hand nehmen.'}`;
+        nextBtn();}
+      else{b.classList.add('wrong');b.disabled=true;bad();
+        f.className='fb no show';
+        f.innerHTML=ok?'Doch — hier steht ein <b>Plus</b>. Zwei Nester, die zusammenkommen.':'Nein. Hier steht ein <b>Minus</b>: oben das Nest, unten die Hand.';}};
+    box.appendChild(b);});
+}
+function rUeber(t){
+  body.appendChild(el('div','step',`Aufgabe ${cur.i+1} von ${cur.tasks.length}`));
+  body.appendChild(el('div','ask','Wie viel bleibt ungefähr übrig?'));
+  const eq=el('div',null,`<span style="font-family:'Baloo 2';font-size:clamp(24px,7.5vw,38px);font-weight:600">${fmt(t.a)} − ${fmt(t.b)}</span>`);
+  eq.style.textAlign='center';body.appendChild(eq);
+  body.appendChild(el('div','hintline','Nicht ausrechnen! Nur schätzen: Sind die Nester fast gleich voll?'));
+  const box=el('div','opts');body.appendChild(box);
+  const f=fbBox();
+  UEBOPTS.forEach((o,i)=>{const b=el('button','opt',`<span class="mark">${'ABC'[i]}</span><span>${o}</span>`);
+    b.onclick=()=>{if(i===t.right){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();
+        f.className='fb ok show';f.innerHTML=`<b>${P()}</b>${SER()}<br>${t.why}`;nextBtn();}
+      else{b.classList.add('wrong');b.disabled=true;bad();
+        f.className='fb no show';f.innerHTML='Runde beide Zahlen auf glatte Tausender und rechne <b>im Kopf</b>. Was kommt da ungefähr raus?';}};
+    box.appendChild(b);});
+}
+
+/* ---------- geführte Aufgabe ---------- */
+function rGuided(t){
+  const plus=t.op==='+';
+  const len=Math.max(String(t.a).length,String(t.b).length);
+  const orig=dg(t.a,len).reverse(),B=dg(t.b,len).reverse();
+  const top=orig.slice(),res=new Array(len).fill(null),carry=new Array(len+1).fill(0);
+  let pos=0,phase='check',mi=1;
+  const total=len*3;
+  const stepEl=el('div','step');body.appendChild(stepEl);
+  const wrapEl=el('div');wrapEl.className='calcwrap';wrapEl.style.textAlign='center';body.appendChild(wrapEl);
+  const askEl=el('div','ask');body.appendChild(askEl);
+  const zone=el('div');zone.style.cssText='display:flex;flex-direction:column;align-items:center;gap:13px;width:100%';body.appendChild(zone);
+  const f=fbBox();
+  const draw=()=>{wrapEl.innerHTML='';
+    wrapEl.appendChild(colDom({len,orig,top,B,res,carry,pos,phase,op:t.op,focusTop:true}));
+    stepEl.textContent=`Schritt ${Math.min(mi,total)} · ${PVFULL[pos]} (${UNIT[pos]})`;};
+  function yesno(q,correct,whyR,whyW,after){
+    askEl.innerHTML=q;zone.innerHTML='';
+    const box=el('div','opts two');zone.appendChild(box);
+    [['Ja ✓',true],['Nein ✗',false]].forEach(([lab,v])=>{
+      const b=el('button','opt',`<span>${lab}</span>`);
+      b.onclick=()=>{if(v===correct){[...box.children].forEach(c=>c.disabled=true);b.classList.add('right');good();sTick();
+          f.className='fb ok show';f.innerHTML=whyR;mi++;setTimeout(after,reduce?0:430);}
+        else{b.classList.add('wrong');b.disabled=true;bad();f.className='fb no show';f.innerHTML=whyW;}};
+      box.appendChild(b);});}
+  function digit(q,ans,tip,bonus,thenPack){
+    askEl.innerHTML=q;zone.innerHTML='';let tries=0;
+    zone.appendChild(keypad(d=>{
+      if(d===ans){res[pos]=d;good();sTick();f.className='fb ok show';f.innerHTML=`<b>${P()}</b>${SER()}`;
+        if(thenPack){mi+=bonus||1;draw();return setTimeout(packStep,reduce?0:380);}
+        mi+=bonus||1;pos++;if(pos>=len){phase='fertig';draw();return finishTask();}
+        phase='check';draw();setTimeout(runStep,reduce?0:380);}
+      else{tries++;bad();shakeActive();f.className='fb no show';
+        f.innerHTML=tries>=2?`Tipp: ${tip}`:'Noch nicht. Nur <b>diese eine Stelle</b> anschauen.';}}));
+    draw();}
+  function runStepPlus(){
+    const c=carry[pos],s=orig[pos]+B[pos]+c,voll=s>=10;draw();
+    yesno(`Du legst <b>${orig[pos]}</b> und <b>${B[pos]}</b> ${UNIT[pos]} zusammen${c?` — dazu die <b>${UNIT1[pos]}</b>, die du gerade vollgemacht hast`:''}.<br>Wird davon ${ART[pos+1]} <b>${UNIT1[pos+1]}</b> voll? (Also 10 oder mehr?)`,voll,
+      voll?`<b>Ja.</b> Zusammen sind es ${s} — das reicht für ${ART[pos+1]} volle ${UNIT1[pos+1]}.`
+          :`<b>Nein.</b> Zusammen sind es weniger als 10 — es bleibt alles hier liegen.`,
+      voll?`Doch: ${orig[pos]} + ${B[pos]}${c?' + 1':''} sind schon 10 oder mehr.`
+          :`Nein — ${orig[pos]} + ${B[pos]}${c?' + 1':''} bleibt unter 10.`,
+      ()=>{phase='digit';draw();
+        if(voll)digit(`${ART[pos+1]} ${UNIT1[pos+1]} ist voll und wandert weiter.<br>Wie viele <b>${UNIT[pos]}</b> bleiben liegen?`,
+          s%10,`${s} − 10 = <b>${s%10}</b> bleiben liegen`,1,true);
+        else digit(`Wie viele <b>${UNIT[pos]}</b> sind es zusammen?`,s,`${orig[pos]} + ${B[pos]}${c?' + 1':''} = <b>${s}</b>`);});}
+  function packStep(){
+    askEl.innerHTML=`Jetzt die volle <b>${UNIT1[pos+1]}</b> weiterschieben.`;zone.innerHTML='';
+    const r=el('div','btnrow'),b=el('button','btn',`${UNIT1[pos+1]} einpacken`);
+    b.onclick=()=>{carry[pos+1]=1;sCrack();mi++;pos++;
+      if(pos>=len){phase='fertig';draw();return finishTask();}
+      phase='check';draw();runStepPlus();};
+    r.appendChild(b);zone.appendChild(r);b.focus();draw();}
+  function runStep(){
+    if(plus)return runStepPlus();
+    const t0=top[pos],b0=B[pos],ok=t0>=b0;draw();
+    yesno(`Im Regal liegen <b>${t0}</b> ${UNIT[pos]}.<br>Die Hand will <b>${b0}</b> davon nehmen. Geht das?`,ok,
+      ok?`<b>Ja.</b> ${t0} ${UNIT[pos]} sind genug.`
+        :`<b>Richtig, das geht nicht.</b> ${t0} ist weniger als ${b0} — du musst ${ART[pos+1]} ${UNIT1[pos+1]} aufmachen.`,
+      ok?`Doch! ${t0} ist genug für ${b0}.`:`Doch nicht: von ${t0} ${UNIT[pos]} kannst du keine ${b0} wegnehmen.`,
+      ()=>{if(ok){phase='digit';draw();digit(`Rechne: <b>${t0} − ${b0}</b>`,t0-b0,`${t0} − ${b0} = <b>${t0-b0}</b>`);}
+           else doBorrow();});}
+  function doBorrow(){
+    const nb=pos+1;
+    if(top[nb]===0){draw();
+      yesno(`Im ${UNIT1[nb]}-Regal steht eine <b>0</b> — da ist ${ART[nb]} ${UNIT1[nb]} nicht mehr da.<br>Kannst du dort trotzdem eine aufmachen?`,false,
+        `<b>Genau.</b> Ein leeres Regal gibt nichts her. Du musst eine Stelle weiter links aufmachen.`,
+        `Nein — dort steht eine 0. Da ist nichts, was du aufmachen könntest.`,applyBorrow);}
+    else applyBorrow();}
+  function applyBorrow(){
+    const before=top.slice(),info=borrowChain(top,pos,len);
+    phase='digit';draw();sCrack();
+    let txt=`Du machst ${ART[info.k]} <b>${UNIT1[info.k]}</b> auf: aus <b>${before[info.k]}</b> ${UNIT[info.k]} werden <b>${top[info.k]}</b>.`;
+    info.zeros.slice().reverse().forEach(j=>{
+      txt+=` Daraus werden 10 ${UNIT[j]} — ${ART[j]} ${UNIT1[j]} machst du gleich weiter auf, die <b>9</b> anderen bleiben stehen.`;});
+    txt+=` Und bei deinen ${UNIT[pos]} werden aus <b>${before[pos]}</b> jetzt <b>${top[pos]}</b>.`;
+    f.className='fb tip show';f.innerHTML=txt;
+    digit(`Jetzt geht es: <b>${top[pos]} − ${B[pos]}</b>`,top[pos]-B[pos],`${top[pos]} − ${B[pos]} = <b>${top[pos]-B[pos]}</b>`,2);}
+  function finishTask(){
+    const val=plus?t.a+t.b:t.a-t.b;burst(40);runQuail(3,true);
+    askEl.innerHTML='Geschafft!';stepEl.textContent='Ergebnis';zone.innerHTML='';
+    f.className='fb ok show';
+    f.innerHTML=`<b>${fmt(t.a)} ${plus?'+':'−'} ${fmt(t.b)} = ${fmt(val)}</b>${!plus&&val<100?'<br>Zwei fast gleich volle Nester → ganz wenige Eier Unterschied.':''}`;
+    const r=el('div','btnrow'),pb=el('button','btn','Probe machen →');
+    pb.onclick=()=>proben(t,val,done);r.appendChild(pb);
+    const sk=el('button','btn ghost','Weiter ohne Probe');sk.onclick=done;r.appendChild(sk);
+    zone.appendChild(r);}
+  draw();runStep();
+}
+
+/* ---------- freie Spaltenrechnung ---------- */
+function rCol(t){
+  const plus=t.op==='+';
+  const len=Math.max(String(t.a).length,String(t.b).length);
+  const orig=dg(t.a,len).reverse(),B=dg(t.b,len).reverse();
+  const top=orig.slice(),under=new Array(len+1).fill(0),carry=new Array(len+1).fill(0),res=new Array(len).fill(null);
+  let pos=0,phase='digit',tries=0,fin=false;
+  const method=S.method;
+  const wrapEl=el('div');wrapEl.className='calcwrap';wrapEl.style.textAlign='center';body.appendChild(wrapEl);
+  const hint=el('div','hintline');body.appendChild(hint);
+  const act=el('div','btnrow');body.appendChild(act);
+  const zone=el('div');zone.style.cssText='display:flex;justify-content:center;width:100%';body.appendChild(zone);
+  const f=fbBox();
+  const draw=()=>{wrapEl.innerHTML='';
+    wrapEl.appendChild(colDom({len,orig,top,B,res,under,carry,pos,phase,op:t.op,showUnder:!plus&&method==='erg'}));};
+  const exp=()=>{if(plus){const s=orig[pos]+B[pos]+carry[pos];return{d:s%10,c:s>=10};}
+    if(method==='ent')return{d:top[pos]-B[pos],c:false};
+    const be=B[pos]+under[pos];return be<=top[pos]?{d:top[pos]-be,c:false}:{d:top[pos]+10-be,c:true};};
+  function coach(){act.innerHTML='';if(fin)return;
+    if(plus){
+      if(phase==='carry'){hint.innerHTML=`Zehn ${UNIT[pos]} sind voll — pack sie zu ${ART[pos+1]} <b>${UNIT1[pos+1]}</b>!`;
+        const b=el('button','btn small',`${UNIT1[pos+1]} einpacken`);
+        b.onclick=()=>{carry[pos+1]=1;sCrack();pos++;phase='digit';draw();coach();};act.appendChild(b);return;}
+      hint.innerHTML=`<b>${PVFULL[pos]}</b> (${UNIT[pos]}): ${orig[pos]} + ${B[pos]}${carry[pos]?' + 1 eingepackte':''}`;return;}
+    if(method==='ent'){
+      if(phase==='borrow'){hint.innerHTML=`Nur <b>${top[pos]}</b> ${UNIT[pos]} da, gebraucht werden <b>${B[pos]}</b>. Mach ${ART[pos+1]} ${UNIT1[pos+1]} auf!`;
+        const b=el('button','btn small',`${UNIT1[pos+1]} aufmachen`);
+        b.onclick=()=>{borrowChain(top,pos,len);sCrack();phase='digit';draw();coach();};act.appendChild(b);return;}
+      hint.innerHTML=`<b>${PVFULL[pos]}</b> (${UNIT[pos]}): ${top[pos]} − ${B[pos]}`;
+    }else{const be=B[pos]+under[pos];
+      if(phase==='carry'){hint.innerHTML=`Du bist über 10 gegangen — merk die <b>1</b> unter den ${PVFULL[pos+1]}n.`;
+        const b=el('button','btn small','1 merken');
+        b.onclick=()=>{under[pos+1]=1;sTick();pos++;phase='digit';draw();coach();};act.appendChild(b);return;}
+      hint.innerHTML=be<=top[pos]?`<b>${PVFULL[pos]}</b> ergänzen: ${be} + ? = ${top[pos]}`
+        :`<b>${PVFULL[pos]}</b>: ${be} + ? = ${top[pos]} geht nicht → nimm ${top[pos]+10}`;}}
+  function enter(d){
+    if(fin||phase!=='digit')return;
+    if(!plus&&method==='ent'&&top[pos]<B[pos]){phase='borrow';bad();f.className='fb no show';
+      f.innerHTML=`Stopp! Nur <b>${top[pos]}</b> ${UNIT[pos]} da, die Hand will <b>${B[pos]}</b>. Erst ${ART[pos+1]} <b>${UNIT1[pos+1]}</b> aufmachen.`;
+      draw();coach();return;}
+    const e=exp();
+    if(d===e.d){res[pos]=d;tries=0;sTick();f.className='fb';
+      if(e.c&&(plus||method==='erg')){phase='carry';draw();coach();return;}
+      pos++;if(pos>=len){fin=true;draw();return end();}
+      draw();coach();}
+    else{tries++;bad();shakeActive();f.className='fb no show';
+      const s=orig[pos]+B[pos]+carry[pos];
+      f.innerHTML=tries>=2?`Tipp: ${plus?`${orig[pos]} + ${B[pos]}${carry[pos]?' + 1':''} = <b>${s}</b> — davon schreibst du nur die <b>letzte Ziffer</b> hin.`
+          :method==='ent'?`${top[pos]} − ${B[pos]} = <b>${top[pos]-B[pos]}</b>`:`${B[pos]+under[pos]} + <b>${e.d}</b> = ${B[pos]+under[pos]+e.d}`}`
+        :'Noch nicht. Nur <b>diese eine Stelle</b>.';}}
+  function end(){hint.textContent='';act.innerHTML='';zone.innerHTML='';
+    const val=plus?t.a+t.b:t.a-t.b;good();burst(34);
+    f.className='fb ok show';
+    f.innerHTML=`<b>${P()}</b>${SER()}<br>${fmt(t.a)} ${plus?'+':'−'} ${fmt(t.b)} = <b>${fmt(val)}</b>${!plus&&val<100&&t.a>1000?' — winzig, weil beide Nester fast gleich voll sind.':''}`;
+    const r=el('div','btnrow'),pb=el('button','btn','Probe machen →');
+    pb.onclick=()=>proben(t,val,done);r.appendChild(pb);
+    const sk=el('button','btn ghost','Weiter');sk.onclick=done;r.appendChild(sk);
+    zone.appendChild(r);if(cur.blk.probe)sk.remove();}
+  const est=el('button','key','?');est.title='Überschlag';est.style.color='var(--sky)';
+  est.onclick=()=>{const ra=Math.round(t.a/100)*100,rb=Math.round(t.b/100)*100;
+    f.className='fb tip show';
+    f.innerHTML=`<b>Überschlag:</b> ${fmt(ra)} ${plus?'+':'−'} ${fmt(rb)} ≈ <b>${fmt(plus?ra+rb:ra-rb)}</b>.`;};
+  zone.appendChild(keypad(enter,est));
+  draw();coach();
+  if(!plus){const sw=el('div');sw.style.textAlign='center';
+    sw.innerHTML=`<span class="seg"><button data-m="ent" aria-pressed="${method==='ent'}">Abziehen / Entbündeln</button><button data-m="erg" aria-pressed="${method==='erg'}">Ergänzen / Erweitern</button></span>`;
+    sw.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.method=b.dataset.m;save();render();});
+    body.appendChild(sw);}
+}
+
+/* ---------- Probe ---------- */
+function proben(t,val,after){
+  const plus=t.op==='+';
+  body.innerHTML='';
+  body.appendChild(el('div','step','Die Probe — beweise, dass es stimmt'));
+  body.appendChild(el('div','ask',plus?`Nimm die Eier wieder weg:<br><b>${fmt(val)} − ${fmt(t.b)} = ?</b>`
+    :`Leg die Eier zurück ins Nest:<br><b>${fmt(val)} + ${fmt(t.b)} = ?</b>`));
+  body.appendChild(el('div','hintline',plus?'Wenn wieder das erste Nest herauskommt, war deine Rechnung richtig.'
+    :'Wenn wieder die Zahl herauskommt, die oben im Nest war, war deine Rechnung richtig.'));
+  const inp=el('input');inp.type='text';inp.inputMode='numeric';inp.className='numin';
+  inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'');};
+  inp.onkeydown=e=>{if(e.key==='Enter')chk.click();};
+  body.appendChild(inp);
+  const f=fbBox(),r=el('div','btnrow'),chk=el('button','btn','Prüfen');
+  r.appendChild(chk);body.appendChild(r);
+  chk.onclick=()=>{if(Number(inp.value)===t.a){inp.disabled=true;chk.remove();good();burst(40);sWin();runQuail(3,true);
+      f.className='fb ok show';
+      f.innerHTML=`<b>Die Probe stimmt!</b> ${fmt(val)} ${plus?'−':'+'} ${fmt(t.b)} = ${fmt(t.a)} — genau die Zahl, mit der du angefangen hast. Du hast dir <b>selbst bewiesen</b>, dass es richtig ist.`;
+      const r2=el('div','btnrow'),b=el('button','btn','Weiter →');
+      b.onclick=after;r2.appendChild(b);body.appendChild(r2);b.focus();}
+    else{bad();f.className='fb no show';
+      f.innerHTML=`Das passt noch nicht. Rechne <b>${fmt(val)} ${plus?'−':'+'} ${fmt(t.b)}</b> schriftlich — Stelle für Stelle, von rechts.`;}};
+  inp.focus();
+}
+
+/* ---------- Papier-Block ---------- */
+function rPaper(){
+  body.innerHTML='';
+  const g=subMultiBorrow(4),gp=addCarry(4,2);
+  const list=shuffle(zeroSet(4).map(x=>pt(x,'-'))
+    .concat([0,1,2,3].map(()=>pt(g(),'-')))
+    .concat([0,1,2,3].map(()=>pt(gp(),'+')))).slice(0,12);
+  body.appendChild(el('div','ask','12 Aufgaben fürs Heft'));
+  body.appendChild(el('div','hintline','Schreib sie sauber untereinander ins Karoheft — eine Ziffer pro Kästchen. Danach jede Aufgabe mit der Probe prüfen.'));
+  const p=el('div','paper'),grid=el('div','pgrid');
+  list.forEach((x,i)=>{const c=el('div','ptask'),v=x.op==='+'?x.a+x.b:x.a-x.b;
+    c.innerHTML=`<span class="no">${i+1}</span>${fmt(x.a)}<br>${x.op==='+'?'+':'−'} ${fmt(x.b)}<span class="sol hide">${fmt(v)}</span>`;
+    grid.appendChild(c);});
+  p.appendChild(grid);body.appendChild(p);
+  const f=fbBox(),r=el('div','btnrow');
+  const sol=el('button','btn ghost','Lösungen zeigen (für Mama/Papa)');let shown=false;
+  sol.onclick=()=>{shown=!shown;p.querySelectorAll('.sol').forEach(s=>s.classList.toggle('hide',!shown));
+    sol.textContent=shown?'Lösungen verstecken':'Lösungen zeigen (für Mama/Papa)';};
+  r.appendChild(sol);
+  if(dl){const dlb=el('button','btn ghost','Als Datei speichern');
+    dlb.onclick=async()=>{try{
+      const rows=list.map((x,i)=>`${String(i+1).padStart(2,' ')}.   ${String(x.a).padStart(6,' ')}\n     ${x.op}${String(x.b).padStart(6,' ')}\n     -------\n`).join('\n');
+      const key=list.map((x,i)=>`${i+1}. ${x.a} ${x.op} ${x.b} = ${x.op==='+'?x.a+x.b:x.a-x.b}`).join('\n');
+      await dl.save({filename:'papier-block.txt',data:`ARBEITSBLATT - Schriftlich Plus und Minus\n\n${rows}\n\n--- LOESUNGEN (fuer die Eltern) ---\n${key}\n`});
+    }catch(e){f.className='fb no show';f.textContent='Das Speichern hat nicht geklappt — die Lösungen kannst du dir hier direkt anzeigen lassen.';}};
+    r.appendChild(dlb);}
+  const fin=el('button','btn','Erledigt ✓');
+  fin.onclick=()=>{S.done['d4c']=true;save();paintHud();paintSpine();paintBlocks();burst(50);sWin();runQuail(4,true);
+    body.innerHTML='';const rw=el('div','reward');
+    rw.appendChild(el('div','sticker','📓'));rw.appendChild(el('h3',null,'Papier-Block erledigt'));
+    rw.appendChild(el('div','hintline','Geprüft wird auf Papier, nicht am Bildschirm — das war der wichtigste Teil.'));
+    const rr=el('div','btnrow'),nb=el('button','btn','Weiter zum Abschlusstest →');
+    nb.onclick=()=>start('d4t');rr.appendChild(nb);rw.appendChild(rr);body.appendChild(rw);};
+  r.appendChild(fin);body.appendChild(r);
+  $('#view-play').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+}
+
+/* ---------- Test ---------- */
+function makeTest(blk){
+  const n=blk.n6?6:5,out=[];
+  const g1=subOneBorrow(4),g2=subMultiBorrow(4),gpA=addNoCarry(4),gpC=addCarry(4,2);
+  const gpM=addCarry(4,3);
+  if(blk.day===0){const n0=genNear(),w=genMid();
+    out.push({k:'eier',...pairOf(n0,'winzig')});
+    out.push({k:'nest',a:w[0],b:w[1],op:'-',mode:'who'});
+    out.push({k:'col',...pt(gpC(),'+')});out.push({k:'col',...pt(gpC(),'+')});
+    out.push({k:'col',...pt(g1(),'-')});out.push({k:'col',...pt(g1(),'-')});}
+  else if(blk.day===1){out.push({k:'nest',a:ri(1200,4600),b:ri(1200,4600),op:'+',mode:'swap'});
+    out.push({k:'col',...pt(gpM(),'+')});out.push({k:'col',...pt(gpM(),'+')});
+    out.push({k:'col',...pt(g2(),'-')});out.push({k:'col',...pt(g2(),'-')});}
+  else if(blk.day===2){const n2=genNear();
+    out.push({k:'eier',...pairOf(n2,'winzig')});
+    zeroSet(4).forEach(x=>out.push({k:'col',...pt(x,'-')}));}
+  else{const n3=genNear(),w3=genMid();
+    out.push({k:'eier',...pairOf(n3,'winzig')});
+    out.push({k:'nest',a:w3[0],b:w3[1],op:'-',mode:'who'});
+    zeroSet(2).forEach(x=>out.push({k:'col',...pt(x,'-')}));
+    out.push({k:'col',...pt(g2(),'-')});out.push({k:'col',...pt(gpC(),'+')});}
+  return out.slice(0,n);
+}
+function rTest(t){
+  body.appendChild(el('div','step',`Test · Aufgabe ${cur.i+1} von ${cur.tasks.length}`));
+  ({eier:rEier,nest:rNest,place:rPlace,col:rCol})[t.k](t);
+}
+
+/* ---------- Abschluss ---------- */
+function finish(){
+  const isTest=cur.blk.k==='test';
+  if(isTest){S.tests[cur.blk.day]={r:cur.right,t:cur.tasks.length};save();paintSpine();}
+  sWin();burst(90,true);runQuail(5,true);body.innerHTML='';
+  const r=el('div','reward');
+  if(isTest){
+    const pct=Math.round(cur.right/cur.tasks.length*100);
+    r.appendChild(el('div','sticker',pct>=80?'🏆':pct>=50?'💪':'🐣'));
+    r.appendChild(el('h3',null,'Test fertig'));
+    const sb=el('div','scorebig',`${cur.right} / ${cur.tasks.length}`);
+    sb.style.color=pct>=80?'var(--good)':pct>=50?'var(--hot)':'var(--ink2)';r.appendChild(sb);
+    r.appendChild(el('div','hintline',pct>=80?'Das sitzt. Zeig das Ergebnis deinen Eltern — du hast es dir ehrlich verdient.'
+      :pct>=50?'Guter Zwischenstand. Was noch wackelt, machst du gleich nochmal.'
+      :'Noch nicht sicher — und das ist okay. Geh den geführten Block nochmal durch, dann klappt der Test.'));
+  }else{
+    const idx=ALLB.findIndex(b=>b.id===cur.blk.id);
+    r.appendChild(el('div','sticker',['🥚','🐣','🪺','🌾','🧺','🐤','🍳','🎯','⚡','🌟','🦊','🏅','🐝','🌈','👑','🔥','📦','🍀','🎈','🧩'][idx%20]));
+    r.appendChild(el('h3',null,`„${cur.blk.n}" geschafft!`));
+  }
+  const bp=el('div','bigpappe');
+  for(let i=0;i<EGGS_PER_CARTON;i++){const s=el('div','slot');if(i<S.eggs)s.appendChild(eiEl());bp.appendChild(s);}
+  r.appendChild(bp);
+  r.appendChild(el('div','hintline',`Heute schon <b>${S.cartons}</b> volle ${S.cartons===1?'Pappe':'Pappen'} und <b>${S.eggs}</b> ${S.eggs===1?'Ei':'Eier'} gesammelt.`));
+  if(cur.blk.pause)r.appendChild(el('div','pausebox','☕ Jetzt <b>5 Minuten Pause</b> — aufstehen, trinken, kurz nach den Küken schauen. Danach geht’s besser weiter.'));
+  const nb=ALLB.find(b=>!S.done[b.id]),row=el('div','btnrow');
+  if(nb){const b=el('button','btn',`Weiter: ${nb.n} →`);b.onclick=()=>start(nb.id);row.appendChild(b);}
+  const ag=el('button','btn ghost','Nochmal');ag.onclick=()=>start(cur.blk.id);row.appendChild(ag);
+  r.appendChild(row);body.appendChild(r);
+}
+
+/* ---------- Start ---------- */
+$('#sound').onclick=()=>{S.muted=!S.muted;muted=S.muted;paintHud();save();if(!muted)sTick();};
+zeigeProfil();
+loadLocal();
+if(!S.started)S.started=today();
+rollDay();
+paintHud();paintCarton();
+start((ALLB.find(b=>!S.done[b.id])||ALLB[0]).id);
+paintSpine();paintBlocks();
+connect();
+})();
+</script>
+</body>
+</html>

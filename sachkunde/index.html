@@ -140,6 +140,27 @@ img.choice-img{width:86px;}
 .sign-gallery figure{margin:0;text-align:center;}
 .sign-gallery figcaption{font-size:12.5px;color:var(--ink-soft);margin-top:8px;line-height:1.45;}
 .sign-gallery figcaption b{color:var(--ink);font-size:13px;}
+
+/* ---------- Fahrrad-Jubel: fährt bei jeder richtigen Antwort durchs Bild ---------- */
+#jubel-layer{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;}
+.radfahrer{position:absolute;animation:radFahrt 2.1s linear forwards;will-change:transform;}
+@keyframes radFahrt{from{transform:translateX(-160px);}to{transform:translateX(calc(100vw + 160px));}}
+.radfahrer .huepf{display:block;animation:radHuepf .26s ease-in-out infinite alternate;}
+@keyframes radHuepf{from{transform:translateY(-3px);}to{transform:translateY(3px);}}
+.radfahrer .rad{animation:radDreh .45s linear infinite;}
+@keyframes radDreh{to{transform:rotate(360deg);}}
+.radfahrer .bein{transform-origin:14px 4px;animation:radTreten .45s linear infinite;}
+.radfahrer .bein.hinten{animation-delay:-.225s;}
+@keyframes radTreten{to{transform:rotate(360deg);}}
+
+
+/* ---------- Handy ---------- */
+@media (max-width:600px){
+  #app{padding:16px 12px 60px;}
+  .top h1{font-size:21px;}
+  .choice{padding:13px 10px;font-size:14.5px;}
+}
+
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;}}
 </style>
 </head>
@@ -239,6 +260,59 @@ function loadStats(){
   try{ return JSON.parse(localStorage.getItem(statsKey()) || "{}"); }catch(e){ return {}; }
 }
 function saveStats(s){ try{ localStorage.setItem(statsKey(), JSON.stringify(s)); }catch(e){} }
+/* Bei jeder richtigen Antwort radelt ein Kind mit Helm durchs Bild. */
+function jubelLayer(){
+  let l = document.getElementById("jubel-layer");
+  if(!l){ l = document.createElement("div"); l.id = "jubel-layer"; document.body.appendChild(l); }
+  return l;
+}
+function magSichBewegen(){
+  return !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+function fahrradFaehrt(){
+  if(!magSichBewegen()) return;
+  const l = jubelLayer();
+  const d = document.createElement("div");
+  d.className = "radfahrer";
+  d.style.top = (28 + Math.random()*42) + "%";
+  d.innerHTML = `<span class="huepf"><svg width="150" height="104" viewBox="0 0 150 104" fill="none" aria-hidden="true">
+    <!-- Räder -->
+    <g class="rad" style="transform-origin:32px 76px;">
+      <circle cx="32" cy="76" r="22" stroke="#2E2B33" stroke-width="4.5" fill="none"/>
+      <path d="M32 54 V98 M10 76 H54 M16 60 L48 92 M48 60 L16 92" stroke="#9A95A3" stroke-width="2"/>
+      <circle cx="32" cy="76" r="3" fill="#2E2B33"/>
+    </g>
+    <g class="rad" style="transform-origin:114px 76px;">
+      <circle cx="114" cy="76" r="22" stroke="#2E2B33" stroke-width="4.5" fill="none"/>
+      <path d="M114 54 V98 M92 76 H136 M98 60 L130 92 M130 60 L98 92" stroke="#9A95A3" stroke-width="2"/>
+      <circle cx="114" cy="76" r="3" fill="#2E2B33"/>
+    </g>
+    <!-- Rahmen: Sattelrohr, Oberrohr, Steuerrohr, Gabel, Streben -->
+    <path d="M72 76 L62 46 M62 46 L100 46 M100 46 L106 58 M106 58 L114 76 M72 76 L32 76 M62 46 L32 76 M72 76 L100 46"
+          stroke="#3D6BD6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Sattel und Lenker -->
+    <path d="M54 44 h16" stroke="#2E2B33" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M100 46 V37 M94 37 h16" stroke="#2E2B33" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- vorne weiß, hinten rot -->
+    <circle cx="112" cy="52" r="3.6" fill="#FBF6E2" stroke="#2E2B33" stroke-width="1.4"/>
+    <circle cx="33" cy="62" r="3.2" fill="#D8465E"/>
+    <!-- Kind: Beine treten ums Tretlager -->
+    <g class="bein hinten" style="transform-origin:72px 76px;"><rect x="68" y="72" width="8" height="21" rx="4" fill="#443E4D"/></g>
+    <path d="M62 42 L72 72" stroke="#4B4552" stroke-width="9" stroke-linecap="round"/>
+    <g class="bein" style="transform-origin:72px 76px;"><rect x="68" y="72" width="8" height="21" rx="4" fill="#5D5668"/></g>
+    <path d="M60 42 L78 24" stroke="#8B6FC4" stroke-width="13" stroke-linecap="round"/>
+    <path d="M80 26 L99 38" stroke="#8B6FC4" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="86" cy="21" r="11" fill="#F2C79B"/>
+    <path d="M75 20 a11 11 0 0 1 22 0 z" fill="#D8465E"/>
+    <path d="M74 20 h24" stroke="#B3394E" stroke-width="3" stroke-linecap="round"/>
+    <path d="M97 19 q5 1 5 4" stroke="#D8465E" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="93" cy="22" r="1.9" fill="#2E2B33"/>
+    <path d="M90 27 q4 2.5 6 -0.5" stroke="#2E2B33" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+  </svg></span>`;
+  l.appendChild(d);
+  setTimeout(()=>d.remove(), 2400);
+}
+
 function noteResult(key, correct){
   const s = loadStats();
   const e = s[key] || {c:0, w:0};
@@ -653,6 +727,7 @@ function renderQuestion(){
         fb.innerHTML = (versuche===1 ? "Richtig! 🎉" : "Richtig!") + `<div class="why">${q.why}</div>`;
         session.marks[session.idx] = versuche===1 ? "done" : "miss";
         noteResult(q.key, versuche===1);
+        fahrradFaehrt();
         setTimeout(next, versuche===1 ? 1900 : 2600);
       }else if(versuche<2){
         btn.classList.add("wrong");
