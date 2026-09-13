@@ -62,6 +62,32 @@ h2{font-family:"Baloo 2",sans-serif;font-size:17px;margin:34px 0 14px;color:var(
 .subject.soon{opacity:.55;cursor:default;border-style:dashed;}
 .subject.soon:hover{transform:none;border-color:var(--paper-edge);}
 .hint{margin-top:34px;font-size:13px;color:var(--ink-soft);line-height:1.7;}
+
+/* Profilauswahl */
+.picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;}
+.picker-card{
+  display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--paper-deep);
+  border:2px solid var(--paper-edge);border-radius:20px;padding:24px 16px;cursor:pointer;color:var(--ink);
+  font-family:inherit;transition:transform .12s ease,border-color .12s ease;
+}
+.picker-card:hover{transform:translateY(-3px);border-color:var(--coral);}
+.picker-card .avatar{
+  width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:"Baloo 2",sans-serif;font-size:27px;font-weight:800;
+}
+.picker-card .nm{font-family:"Baloo 2",sans-serif;font-size:17px;font-weight:700;}
+.wer{
+  display:flex;align-items:center;gap:10px;margin:22px 0 0;background:var(--paper-deep);
+  border:2px solid var(--paper-edge);border-radius:999px;padding:7px 8px 7px 8px;width:fit-content;
+}
+.wer .dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:"Baloo 2",sans-serif;font-size:14px;font-weight:800;}
+.wer .txt{font-size:14px;font-weight:700;}
+.wer button{
+  background:none;border:none;color:var(--ocean-deep);font-family:inherit;font-size:13px;
+  font-weight:700;cursor:pointer;text-decoration:underline;padding:4px 10px 4px 4px;
+}
+[hidden]{display:none !important;}
 </style>
 </head>
 <body>
@@ -79,8 +105,21 @@ h2{font-family:"Baloo 2",sans-serif;font-size:17px;margin:34px 0 14px;color:var(
     </div>
   </header>
 
-  <h2>Welches Fach möchtest du üben?</h2>
-  <div class="subjects">
+  <section id="profilwahl" hidden>
+    <h2>Wer lernt heute?</h2>
+    <div class="picker-grid" id="profile"></div>
+    <p class="hint">Tipp auf deinen Namen – dann merkt sich die App in allen Fächern deinen eigenen Stand.</p>
+  </section>
+
+  <section id="faecher" hidden>
+    <div class="wer">
+      <span class="dot" id="wer-dot"></span>
+      <span class="txt" id="wer-name"></span>
+      <button id="wer-wechseln">wechseln</button>
+    </div>
+
+    <h2>Welches Fach möchtest du üben?</h2>
+    <div class="subjects">
     <a class="subject" href="englisch/">
       <div class="emoji">💬</div>
       <div>
@@ -109,12 +148,78 @@ h2{font-family:"Baloo 2",sans-serif;font-size:17px;margin:34px 0 14px;color:var(
         <div class="meta">kommt noch</div>
       </div>
     </div>
-  </div>
+    </div>
 
-  <p class="hint">
-    Tipp: Diese Seite lässt sich wie eine App auf den Startbildschirm legen –
-    in Safari über das Teilen-Symbol, in Chrome über das Menü ⋮.
-  </p>
+    <p class="hint">
+      Tipp: Diese Seite lässt sich wie eine App auf den Startbildschirm legen –
+      in Safari über das Teilen-Symbol, in Chrome über das Menü ⋮.
+    </p>
+  </section>
 </div>
+
+<script>
+/* Die Profile liegen im localStorage und gelten für alle Fächer:
+   Englisch und Sachkunde lesen dieselben Schlüssel. */
+(function(){
+  "use strict";
+  const STANDARD = [
+    {id:"kid-ellena", name:"Ellena", color:"#8B6FC4"},
+    {id:"kid-merle",  name:"Merle",  color:"#3D6BD6"},
+    {id:"kid-eltern", name:"Eltern", color:"#4A4750", role:"parent"}
+  ];
+  function profile(){
+    try{
+      const roh = JSON.parse(localStorage.getItem("wex:kids") || "[]");
+      if(Array.isArray(roh) && roh.length) return roh;
+    }catch(e){}
+    return STANDARD;
+  }
+  function aktuell(){
+    let id = null;
+    try{ id = localStorage.getItem("wex:currentKid"); }catch(e){}
+    return profile().find(p=>p.id===id) || null;
+  }
+
+  const wahlBereich = document.getElementById("profilwahl");
+  const faecherBereich = document.getElementById("faecher");
+  const liste = document.getElementById("profile");
+
+  function zeigeWahl(){
+    liste.innerHTML = profile().map(p=>`
+      <button class="picker-card" data-id="${p.id}">
+        <span class="avatar" style="background:${p.color || "#8B6FC4"}">${(p.name || "?")[0].toUpperCase()}</span>
+        <span class="nm">${p.name}</span>
+      </button>`).join("");
+    liste.querySelectorAll("[data-id]").forEach(b=>{
+      b.onclick = ()=>{
+        try{ localStorage.setItem("wex:currentKid", b.getAttribute("data-id")); }catch(e){}
+        zeichne();
+      };
+    });
+    wahlBereich.hidden = false;
+    faecherBereich.hidden = true;
+  }
+
+  function zeigeFaecher(p){
+    document.getElementById("wer-name").textContent = p.name;
+    const dot = document.getElementById("wer-dot");
+    dot.textContent = (p.name || "?")[0].toUpperCase();
+    dot.style.background = p.color || "#8B6FC4";
+    wahlBereich.hidden = true;
+    faecherBereich.hidden = false;
+  }
+
+  function zeichne(){
+    const p = aktuell();
+    if(p) zeigeFaecher(p); else zeigeWahl();
+  }
+
+  document.getElementById("wer-wechseln").onclick = ()=>{
+    try{ localStorage.removeItem("wex:currentKid"); }catch(e){}
+    zeichne();
+  };
+  zeichne();
+})();
+</script>
 </body>
 </html>
