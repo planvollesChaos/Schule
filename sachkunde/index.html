@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fahrrad-Führerschein</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{
+  --paper:#FCFBF8; --paper-deep:#F3EFE6; --paper-edge:#DDD6C8;
+  --ink:#1B1A1E; --ink-soft:#6E6A63;
+  --ocean:#3D6BD6; --ocean-deep:#2C51AC;
+  --coral:#8B6FC4; --coral-deep:#6B51A3;
+  --gold:#A98FD6;
+  --sage:#3F8A5C; --sage-bg:#E6F2E9;
+  --berry:#C2506B; --berry-bg:#FAE9ED;
+  --road:#C9C6BE; --grass:#EAEFE4;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#131316; --paper-deep:#1D1C22; --paper-edge:#312F39;
+    --ink:#F3EFE7; --ink-soft:#A9A49B;
+    --ocean:#7FA3F5; --ocean-deep:#A9C1FF;
+    --coral:#B79AE8; --coral-deep:#CFB9F7;
+    --gold:#C6ABF3;
+    --sage:#6FCB93; --sage-bg:#1D3126;
+    --berry:#E98BA4; --berry-bg:#35222A;
+    --road:#3A3841; --grass:#22262133;
+  }
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;min-height:100vh;
+  background:
+    radial-gradient(circle at 16% 6%, hsl(263 55% 62% / .11), transparent 42%),
+    radial-gradient(circle at 88% 84%, hsl(222 70% 58% / .09), transparent 46%),
+    var(--paper);
+  color:var(--ink);
+  font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Baloo 2",sans-serif;text-wrap:balance;}
+button{font-family:inherit;}
+#app{max-width:760px;margin:0 auto;padding:24px 18px 70px;}
+
+.top{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.top .badge{font-size:40px;line-height:1;}
+.top h1{font-size:27px;font-weight:800;margin:0;color:var(--ocean-deep);}
+.top p{margin:2px 0 0;color:var(--ink-soft);font-size:14px;}
+.back{display:inline-block;margin-bottom:18px;color:var(--ocean-deep);font-size:13.5px;text-decoration:none;}
+.back:hover{text-decoration:underline;}
+
+.modes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:24px;}
+.mode{
+  display:flex;gap:14px;align-items:flex-start;text-align:left;
+  background:var(--paper-deep);border:2px solid var(--paper-edge);border-radius:18px;
+  padding:18px 16px;cursor:pointer;color:var(--ink);
+  transition:transform .12s ease,border-color .12s ease;
+}
+.mode:hover{transform:translateY(-3px);border-color:var(--coral);}
+.mode .ic{font-size:30px;line-height:1;flex:none;}
+.mode h3{margin:0 0 3px;font-size:17px;}
+.mode .sub{font-size:12.5px;color:var(--ink-soft);}
+.mode.exam{border-color:var(--coral);background:hsl(263 60% 62% / .1);}
+
+.card{background:var(--paper-deep);border:2px solid var(--paper-edge);border-radius:20px;padding:22px 20px;text-align:center;}
+.card h3{font-size:16px;color:var(--ink-soft);margin:0 0 14px;font-weight:700;}
+.sign-wrap{display:flex;justify-content:center;margin:4px 0 16px;}
+.sign-wrap svg{width:130px;height:130px;}
+.scene{display:flex;justify-content:center;margin:4px 0 14px;}
+.scene svg{width:100%;max-width:300px;height:auto;}
+.qtext{font-size:18px;line-height:1.5;margin:6px 0 14px;}
+.choices{display:grid;gap:10px;}
+.choices.two{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.choice{
+  padding:14px 12px;border-radius:14px;border:2px solid var(--paper-edge);background:var(--paper);
+  font-weight:700;font-size:15px;cursor:pointer;color:var(--ink);text-align:center;
+}
+.choice:hover:not(:disabled){border-color:var(--ocean);}
+.choice.correct{background:var(--sage-bg);border-color:var(--sage);color:var(--sage);}
+.choice.wrong{background:var(--berry-bg);border-color:var(--berry);color:var(--berry);}
+.choice.sign{padding:8px;}
+.choice.sign svg{width:78px;height:78px;}
+.feedback{margin-top:14px;font-weight:700;min-height:22px;}
+.feedback.ok{color:var(--sage);}
+.feedback.no{color:var(--berry);}
+.why{margin-top:8px;font-weight:400;font-size:14px;color:var(--ink-soft);line-height:1.6;}
+
+.progressdots{display:flex;gap:5px;margin-bottom:18px;}
+.progressdots i{flex:1;height:7px;border-radius:4px;background:var(--paper-edge);}
+.progressdots i.done{background:var(--sage);}
+.progressdots i.now{background:var(--gold);}
+.progressdots i.miss{background:var(--berry);}
+
+.btn{border:none;border-radius:999px;padding:12px 20px;font-weight:700;font-size:14.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--coral);color:#fff;box-shadow:0 4px 0 var(--coral-deep);}
+.btn-primary:active{transform:translateY(3px);box-shadow:none;}
+.btn-ghost{background:transparent;color:var(--ocean-deep);border:2px solid var(--paper-edge);}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px;}
+
+.stars{display:flex;justify-content:center;gap:4px;margin:12px 0;}
+.stars svg{width:26px;height:26px;}
+.result-line{font-size:16px;color:var(--ink-soft);}
+.stat{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft);margin-top:14px;}
+.stat .bar{flex:1;height:10px;border-radius:5px;background:var(--paper-deep);overflow:hidden;}
+.stat .bar i{display:block;height:100%;background:var(--ocean);}
+
+.sheet{margin-top:26px;background:var(--paper-deep);border:1px solid var(--paper-edge);border-radius:16px;padding:16px 18px;}
+.sheet h3{margin:0 0 10px;font-size:16px;}
+.sheet ul{margin:0;padding-left:20px;line-height:1.8;font-size:14.5px;}
+.sign-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;margin-top:16px;}
+.sign-gallery figure{margin:0;text-align:center;}
+.sign-gallery svg{width:84px;height:84px;}
+.sign-gallery figcaption{font-size:12px;color:var(--ink-soft);margin-top:4px;line-height:1.4;}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   Verkehrszeichen – als SVG gezeichnet (Form und Farbe zählen)
+   ============================================================ */
+function bikePicto(color, x, y, s){
+  return `<g transform="translate(${x},${y}) scale(${s})" stroke="${color}" stroke-width="3.4" fill="none" stroke-linecap="round">
+    <circle cx="-13" cy="8" r="9"/><circle cx="13" cy="8" r="9"/>
+    <path d="M-13 8 L-4 -6 L8 -6 L13 8"/><path d="M-4 -6 L2 8"/>
+    <path d="M6 -9 L13 -9"/><path d="M-6 -9 L-1 -9"/>
+  </g>`;
+}
+function personPicto(color, x, y, s){
+  return `<g transform="translate(${x},${y}) scale(${s})" fill="${color}">
+    <circle cx="0" cy="-14" r="4.4"/>
+    <path d="M-1.5 -9 L-6 2 L-3 3 L0 -3 L3 3 L6 2 Z"/>
+    <path d="M-4 3 L-6 14 L-3 14.6 L0 5 L3 14.6 L6 14 L4 3 Z"/>
+  </g>`;
+}
+const SIGNS = {
+  "vorfahrt-gewaehren": {
+    name:"Vorfahrt gewähren",
+    meaning:"Du musst warten und die anderen zuerst fahren lassen.",
+    svg:`<polygon points="50,94 4,14 96,14" fill="#fff" stroke="#D32B25" stroke-width="11" stroke-linejoin="round"/>`
+  },
+  "stop": {
+    name:"Stop – Vorfahrt gewähren",
+    meaning:"Immer anhalten, schauen, dann erst weiterfahren.",
+    svg:`<polygon points="30,6 70,6 94,30 94,70 70,94 30,94 6,70 6,30" fill="#D32B25" stroke="#fff" stroke-width="5"/>
+      <text x="50" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="27" font-weight="bold" fill="#fff">STOP</text>`
+  },
+  "vorfahrtstrasse": {
+    name:"Vorfahrtstraße",
+    meaning:"Du hast Vorfahrt – die anderen müssen warten.",
+    svg:`<polygon points="50,5 95,50 50,95 5,50" fill="#fff"/>
+      <polygon points="50,19 81,50 50,81 19,50" fill="#F5C518"/>`
+  },
+  "vorfahrt-kreuzung": {
+    name:"Vorfahrt an der nächsten Kreuzung",
+    meaning:"An der nächsten Kreuzung hast du Vorfahrt.",
+    svg:`<polygon points="50,6 96,86 4,86" fill="#fff" stroke="#D32B25" stroke-width="9" stroke-linejoin="round"/>
+      <rect x="45" y="34" width="10" height="40" fill="#1B1A1E"/>
+      <rect x="27" y="48" width="46" height="6" fill="#1B1A1E"/>`
+  },
+  "einfahrt-verboten": {
+    name:"Verbot der Einfahrt",
+    meaning:"Hier darfst du nicht hineinfahren – Einbahnstraße von vorn.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#D32B25"/><rect x="18" y="43" width="64" height="14" rx="2" fill="#fff"/>`
+  },
+  "fahrrad-verboten": {
+    name:"Verbot für Fahrräder",
+    meaning:"Hier darfst du nicht mit dem Fahrrad fahren.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#fff" stroke="#D32B25" stroke-width="10"/>
+      ${bikePicto("#1B1A1E", 50, 48, 1.15)}`
+  },
+  "radweg": {
+    name:"Radweg",
+    meaning:"Dieser Weg ist für Radfahrer – hier musst du fahren.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#0B4EA2"/>${bikePicto("#fff", 50, 50, 1.5)}`
+  },
+  "gehweg": {
+    name:"Gehweg",
+    meaning:"Nur für Fußgänger. Das Fahrrad musst du schieben.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#0B4EA2"/>${personPicto("#fff", 50, 50, 1.8)}`
+  },
+  "geh-radweg": {
+    name:"Gemeinsamer Geh- und Radweg",
+    meaning:"Fußgänger und Radfahrer teilen sich den Weg – nimm Rücksicht.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#0B4EA2"/>
+      ${personPicto("#fff", 50, 27, 1.0)}${bikePicto("#fff", 50, 68, 1.0)}`
+  },
+  "zebrastreifen": {
+    name:"Fußgängerüberweg (Zebrastreifen)",
+    meaning:"Fußgänger haben Vorrang. Als Radfahrer absteigen und schieben.",
+    svg:`<rect x="6" y="6" width="88" height="88" rx="4" fill="#0B4EA2"/>
+      <polygon points="20,80 50,26 80,80" fill="#fff"/>
+      <rect x="24" y="72" width="52" height="4" fill="#0B4EA2"/>
+      <rect x="30" y="63" width="40" height="4" fill="#0B4EA2"/>
+      <rect x="36" y="54" width="28" height="4" fill="#0B4EA2"/>
+      ${personPicto("#1B1A1E", 50, 46, 0.95)}`
+  },
+  "kreisverkehr": {
+    name:"Kreisverkehr",
+    meaning:"Wer schon im Kreis fährt, hat Vorfahrt. Du musst warten.",
+    svg:`<circle cx="50" cy="50" r="45" fill="#0B4EA2"/>
+      <g fill="none" stroke="#fff" stroke-width="6.5" stroke-linecap="butt">
+        <path d="M72.5 37 A26 26 0 0 0 47.5 24.3"/>
+        <path d="M27.5 37 A26 26 0 0 0 30.1 66.7"/>
+        <path d="M50 76 A26 26 0 0 0 73.4 59.9"/>
+      </g>
+      <g fill="#fff">
+        <g transform="translate(45.5,24.4) rotate(170)"><polygon points="0,-5.5 10,0 0,5.5"/></g>
+        <g transform="translate(30.1,66.7) rotate(50)"><polygon points="0,-5.5 10,0 0,5.5"/></g>
+        <g transform="translate(74.4,58.9) rotate(-70)"><polygon points="0,-5.5 10,0 0,5.5"/></g>
+      </g>`
+  },
+  "spielstrasse": {
+    name:"Verkehrsberuhigter Bereich (Spielstraße)",
+    meaning:"Hier darfst du nur Schrittgeschwindigkeit fahren, Kinder dürfen spielen.",
+    svg:`<rect x="6" y="6" width="88" height="88" rx="4" fill="#0B4EA2"/>
+      <path d="M14 40 L26 28 L38 40 L38 58 L14 58 Z" fill="#fff"/>
+      ${personPicto("#fff", 58, 40, 0.9)}${personPicto("#fff", 74, 46, 0.65)}
+      <circle cx="48" cy="72" r="5" fill="#fff"/>
+      <rect x="14" y="80" width="72" height="5" fill="#fff"/>`
+  },
+  "sackgasse": {
+    name:"Sackgasse",
+    meaning:"Die Straße hat keinen Ausgang – für Radfahrer oft trotzdem durchlässig.",
+    svg:`<rect x="6" y="6" width="88" height="88" rx="4" fill="#fff" stroke="#DDD6C8" stroke-width="2"/>
+      <rect x="44" y="42" width="12" height="46" fill="#0B4EA2"/>
+      <rect x="22" y="24" width="56" height="12" fill="#D32B25"/>`
+  },
+  "achtung-kinder": {
+    name:"Achtung Kinder",
+    meaning:"Hier spielen oft Kinder – langsam fahren und aufpassen.",
+    svg:`<polygon points="50,6 96,86 4,86" fill="#fff" stroke="#D32B25" stroke-width="9" stroke-linejoin="round"/>
+      ${personPicto("#1B1A1E", 40, 60, 0.95)}${personPicto("#1B1A1E", 60, 63, 0.75)}`
+  }
+};
+function signSvg(id){
+  const s = SIGNS[id];
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${s.name}">${s.svg}</svg>`;
+}
+
+/* ============================================================
+   Kreuzungs-Bilder für die Vorfahrtsfragen
+   ============================================================ */
+function bikeMarker(x, y, rot){
+  return `<g transform="translate(${x},${y}) rotate(${rot})">
+    <circle cx="0" cy="0" r="13" fill="#3D6BD6"/>
+    <text x="0" y="5" text-anchor="middle" font-size="14" fill="#fff" font-weight="bold" transform="rotate(${-rot})">DU</text>
+  </g>`;
+}
+function carMarker(x, y, rot, color, label){
+  return `<g transform="translate(${x},${y}) rotate(${rot})">
+    <rect x="-11" y="-15" width="22" height="30" rx="5" fill="${color}"/>
+    <rect x="-8" y="-9" width="16" height="9" rx="2" fill="#ffffff" opacity=".65"/>
+    ${label ? `<text x="0" y="9" text-anchor="middle" font-size="11" fill="#fff" font-weight="bold" transform="rotate(${-rot})">${label}</text>` : ``}
+  </g>`;
+}
+/* from: "unten" (du), "rechts", "links", "oben" */
+const POS = {
+  unten: {x:112, y:210, rot:0},
+  oben:  {x:88,  y:30,  rot:180},
+  rechts:{x:210, y:88,  rot:270},
+  links: {x:30,  y:112, rot:90}
+};
+function crossingSvg(cfg){
+  const others = (cfg.others||[]).map(o=>{
+    const p = POS[o.from];
+    return carMarker(p.x, p.y, p.rot, o.color||"#C2506B", o.label||"");
+  }).join("");
+  const you = POS.unten;
+  const signs = (cfg.signs||[]).map(s=>{
+    const map = {unten:{x:150,y:172}, oben:{x:50,y:28}, rechts:{x:172,y:50}, links:{x:28,y:150}};
+    const p = map[s.at] || map.unten;
+    return `<g transform="translate(${p.x - 13},${p.y - 13}) scale(0.26)">${SIGNS[s.id].svg}</g>`;
+  }).join("");
+  const arrows = cfg.arrow ? `<path d="${cfg.arrow}" stroke="#3D6BD6" stroke-width="3" fill="none" stroke-dasharray="6 5" marker-end="url(#ah)"/>` : ``;
+  return `<svg viewBox="0 0 240 240" role="img" aria-label="Kreuzung">
+    <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#3D6BD6"/></marker></defs>
+    <rect width="240" height="240" fill="var(--grass)"/>
+    <rect x="72" y="0" width="96" height="240" fill="var(--road)"/>
+    <rect x="0" y="72" width="240" height="96" fill="var(--road)"/>
+    <g stroke="#ffffff" stroke-width="3" stroke-dasharray="10 10" opacity=".75">
+      <line x1="120" y1="0" x2="120" y2="72"/><line x1="120" y1="168" x2="120" y2="240"/>
+      <line x1="0" y1="120" x2="72" y2="120"/><line x1="168" y1="120" x2="240" y2="120"/>
+    </g>
+    ${arrows}${others}${bikeMarker(you.x, you.y, you.rot)}${signs}
+  </svg>`;
+}
+
+/* ============================================================
+   Fragen
+   ============================================================ */
+const SIGN_IDS = Object.keys(SIGNS);
+
+function signQuestions(){
+  const qs = [];
+  SIGN_IDS.forEach(id=>{
+    const wrong = SIGN_IDS.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
+    const opts = [id, ...wrong].sort(()=>Math.random()-0.5);
+    qs.push({
+      key:"sign-mean-"+id,
+      head:"Was bedeutet dieses Schild?",
+      visual:`<div class="sign-wrap">${signSvg(id)}</div>`,
+      options: opts.map(o=>({label:SIGNS[o].name, correct:o===id})),
+      why: SIGNS[id].meaning
+    });
+    const wrong2 = SIGN_IDS.filter(x=>x!==id).sort(()=>Math.random()-0.5).slice(0,3);
+    const opts2 = [id, ...wrong2].sort(()=>Math.random()-0.5);
+    qs.push({
+      key:"sign-find-"+id,
+      head:"Welches Schild ist das?",
+      question: SIGNS[id].name,
+      options: opts2.map(o=>({html:signSvg(o), correct:o===id, signOption:true})),
+      why: SIGNS[id].meaning
+    });
+  });
+  return qs;
+}
+
+const RIGHT_OF_WAY = [
+  {
+    key:"row-rvl",
+    head:"Wer fährt zuerst?",
+    question:"Keine Schilder. Von rechts kommt ein Auto.",
+    visual: crossingSvg({others:[{from:"rechts", color:"#C2506B"}]}),
+    options:[{label:"Das Auto von rechts", correct:true},{label:"Du"},{label:"Wer schneller ist"}],
+    why:"Ohne Schilder gilt: rechts vor links. Das Auto kommt von rechts und darf zuerst."
+  },
+  {
+    key:"row-links",
+    head:"Wer fährt zuerst?",
+    question:"Keine Schilder. Von links kommt ein Auto.",
+    visual: crossingSvg({others:[{from:"links", color:"#C2506B"}]}),
+    options:[{label:"Du", correct:true},{label:"Das Auto von links"},{label:"Beide gleichzeitig"}],
+    why:"Rechts vor links: Für das Auto kommst du von rechts – du darfst zuerst. Trotzdem schauen!"
+  },
+  {
+    key:"row-vorfahrtstrasse",
+    head:"Wer fährt zuerst?",
+    question:"Du fährst auf der Vorfahrtstraße, von rechts kommt ein Auto.",
+    visual: crossingSvg({others:[{from:"rechts", color:"#C2506B"}], signs:[{id:"vorfahrtstrasse", at:"unten"}]}),
+    options:[{label:"Du", correct:true},{label:"Das Auto von rechts"},{label:"Das Auto, weil es größer ist"}],
+    why:"Das gelbe Schild bedeutet Vorfahrtstraße – du hast Vorfahrt, das Auto muss warten."
+  },
+  {
+    key:"row-gewaehren",
+    head:"Wer fährt zuerst?",
+    question:"Vor dir steht dieses Schild, von links kommt ein Auto.",
+    visual: crossingSvg({others:[{from:"links", color:"#C2506B"}], signs:[{id:"vorfahrt-gewaehren", at:"unten"}]}),
+    options:[{label:"Das Auto von links", correct:true},{label:"Du, weil du von rechts kommst"},{label:"Du, weil Fahrräder Vorrang haben"}],
+    why:"„Vorfahrt gewähren“ zählt mehr als rechts vor links: Du musst alle anderen zuerst fahren lassen."
+  },
+  {
+    key:"row-stop",
+    head:"Was musst du hier tun?",
+    question:"Vor dir steht das Stop-Schild. Es kommt gerade niemand.",
+    visual: crossingSvg({signs:[{id:"stop", at:"unten"}]}),
+    options:[{label:"Anhalten, schauen, dann fahren", correct:true},{label:"Langsamer werden reicht"},{label:"Weiterfahren, wenn frei ist"}],
+    why:"Beim Stop-Schild musst du immer wirklich anhalten – auch wenn die Straße leer aussieht."
+  },
+  {
+    key:"row-links-abbiegen",
+    head:"Wer fährt zuerst?",
+    question:"Du willst nach links abbiegen. Dir kommt ein Auto entgegen, das geradeaus fährt.",
+    visual: crossingSvg({others:[{from:"oben", color:"#C2506B"}], arrow:"M112 200 L112 130 L60 118"}),
+    options:[{label:"Das entgegenkommende Auto", correct:true},{label:"Du, weil du abbiegst"},{label:"Egal, wer zuerst da ist"}],
+    why:"Wer links abbiegt, muss den Gegenverkehr durchlassen. Erst Handzeichen geben, Schulterblick, dann warten."
+  },
+  {
+    key:"row-kreisverkehr",
+    head:"Wer fährt zuerst?",
+    question:"Du willst in einen Kreisverkehr einfahren, im Kreis fährt schon ein Auto.",
+    visual:`<div class="sign-wrap">${signSvg("kreisverkehr")}</div>`,
+    options:[{label:"Das Auto im Kreisverkehr", correct:true},{label:"Du, weil du von rechts kommst"},{label:"Wer zuerst blinkt"}],
+    why:"Im Kreisverkehr hat immer Vorfahrt, wer schon im Kreis fährt. Beim Verlassen Handzeichen nach rechts geben."
+  },
+  {
+    key:"row-polizist",
+    head:"Worauf musst du achten?",
+    question:"Die Ampel zeigt Grün, aber ein Polizist regelt den Verkehr und hält dich an.",
+    options:[{label:"Auf den Polizisten – er gilt vor der Ampel", correct:true},{label:"Auf die Ampel, die ist wichtiger"},{label:"Auf die Schilder an der Kreuzung"}],
+    why:"Die Reihenfolge ist: Polizist vor Ampel, Ampel vor Schildern, Schilder vor rechts vor links."
+  },
+  {
+    key:"row-zebra",
+    head:"Was machst du hier richtig?",
+    question:"Du kommst mit dem Fahrrad an einen Zebrastreifen, an dem Leute warten.",
+    visual:`<div class="sign-wrap">${signSvg("zebrastreifen")}</div>`,
+    options:[{label:"Absteigen und schieben", correct:true},{label:"Schnell rüberfahren"},{label:"Klingeln und weiterfahren"}],
+    why:"Der Zebrastreifen gilt für Fußgänger. Wer schiebt, ist Fußgänger und darf Vorrang nehmen."
+  }
+];
+
+const RULES = [
+  {
+    key:"rule-ausruestung",
+    head:"Verkehrssicheres Fahrrad",
+    question:"Wie viele voneinander unabhängige Bremsen muss dein Fahrrad haben?",
+    options:[{label:"Zwei", correct:true},{label:"Eine"},{label:"Drei"}],
+    why:"Ein verkehrssicheres Fahrrad hat zwei unabhängige Bremsen – vorne und hinten."
+  },
+  {
+    key:"rule-licht",
+    head:"Verkehrssicheres Fahrrad",
+    question:"Welche Farben haben Licht und Rückstrahler am Fahrrad?",
+    options:[{label:"Vorne weiß, hinten rot", correct:true},{label:"Vorne rot, hinten weiß"},{label:"Beide gelb"}],
+    why:"Vorne weiß, hinten rot. Dazu gehören gelbe Reflektoren an Pedalen und Speichen und eine Klingel."
+  },
+  {
+    key:"rule-klingel",
+    head:"Verkehrssicheres Fahrrad",
+    question:"Was gehört NICHT zur Pflichtausstattung am Fahrrad?",
+    options:[{label:"Ein Gepäckträger", correct:true},{label:"Eine Klingel"},{label:"Rückstrahler an den Pedalen"}],
+    why:"Klingel, zwei Bremsen, Beleuchtung und Rückstrahler sind Pflicht – ein Gepäckträger nicht."
+  },
+  {
+    key:"rule-helm",
+    head:"Fahrradhelm",
+    question:"Muss man in Deutschland mit dem Fahrrad einen Helm tragen?",
+    options:[{label:"Vorgeschrieben ist er nicht, aber er schützt dich", correct:true},{label:"Ja, sonst gibt es Strafe"},{label:"Nur Erwachsene brauchen einen"}],
+    why:"Eine Helmpflicht gibt es nicht – trotzdem trägt man ihn, weil er bei einem Sturz den Kopf schützt."
+  },
+  {
+    key:"rule-handzeichen",
+    head:"Handzeichen",
+    question:"Du willst nach rechts abbiegen. Was machst du?",
+    options:[{label:"Rechten Arm ausstrecken", correct:true},{label:"Linken Arm ausstrecken"},{label:"Nur klingeln"}],
+    why:"Du streckst den Arm in die Richtung aus, in die du abbiegen willst – und machst vorher einen Schulterblick."
+  },
+  {
+    key:"rule-schulterblick",
+    head:"Vor dem Abbiegen",
+    question:"In welcher Reihenfolge machst du es richtig?",
+    options:[{label:"Umschauen – Handzeichen – umschauen – abbiegen", correct:true},{label:"Abbiegen – Handzeichen"},{label:"Klingeln – abbiegen"}],
+    why:"Erst Schulterblick, dann Handzeichen, noch einmal schauen und dann erst abbiegen."
+  },
+  {
+    key:"rule-gehweg",
+    head:"Wo darfst du fahren?",
+    question:"Du bist 9 Jahre alt. Darfst du auf dem Gehweg fahren?",
+    options:[{label:"Ja, bis zum 10. Geburtstag darfst du das", correct:true},{label:"Nein, nie"},{label:"Ja, immer – auch später noch"}],
+    why:"Kinder bis 8 Jahre müssen auf dem Gehweg fahren, bis 10 dürfen sie. Danach gehört man auf Radweg oder Straße. Vor jeder Fahrbahn absteigen und schieben."
+  },
+  {
+    key:"rule-parkende-autos",
+    head:"Unterwegs",
+    question:"Du fährst an parkenden Autos vorbei. Worauf achtest du?",
+    options:[{label:"Abstand halten – es kann eine Tür aufgehen", correct:true},{label:"Ganz dicht vorbeifahren"},{label:"Schneller fahren"}],
+    why:"Etwa einen Meter Abstand halten, damit dich eine aufgehende Autotür nicht erwischt."
+  },
+  {
+    key:"rule-handy",
+    head:"Unterwegs",
+    question:"Darfst du beim Radfahren das Handy in die Hand nehmen?",
+    options:[{label:"Nein, das ist verboten", correct:true},{label:"Ja, kurz schon"},{label:"Ja, wenn man langsam fährt"}],
+    why:"Das Handy in der Hand ist beim Radfahren verboten. Auch laute Kopfhörer sind gefährlich, weil du nichts hörst."
+  },
+  {
+    key:"rule-ampel-gelb",
+    head:"Ampel",
+    question:"Die Ampel springt auf Gelb, du bist noch nicht an der Haltelinie. Was tust du?",
+    options:[{label:"Anhalten", correct:true},{label:"Schnell Gas geben"},{label:"Klingeln und weiterfahren"}],
+    why:"Gelb heißt: vor der Kreuzung anhalten. Nur wer schon so weit ist, dass Bremsen gefährlich wäre, fährt weiter."
+  },
+  {
+    key:"rule-einbahn",
+    head:"Schilder",
+    question:"Vor dir steht „Verbot der Einfahrt“ (rotes Schild mit weißem Balken).",
+    options:[{label:"Hier darfst du nicht hineinfahren", correct:true},{label:"Hier musst du nur langsam fahren"},{label:"Das Schild gilt nicht für Fahrräder"}],
+    why:"Da darfst du nicht hinein – außer ein Zusatzschild erlaubt Radfahrern ausdrücklich die Durchfahrt."
+  },
+  {
+    key:"rule-nebeneinander",
+    head:"Zusammen unterwegs",
+    question:"Ihr fahrt zu zweit. Wie fahrt ihr am sichersten?",
+    options:[{label:"Hintereinander, wenn Autos hinter euch sind", correct:true},{label:"Immer nebeneinander"},{label:"Einer auf dem Gehweg, einer auf der Straße"}],
+    why:"Nebeneinander ist nur erlaubt, wenn niemand behindert wird. Sobald ein Auto kommt: hintereinander fahren."
+  }
+];
+
+/* ============================================================
+   Fortschritt (lokal pro Gerät, eigener Schlüssel: rad:)
+   ============================================================ */
+function loadStats(){
+  try{ return JSON.parse(localStorage.getItem("rad:stats") || "{}"); }catch(e){ return {}; }
+}
+function saveStats(s){ try{ localStorage.setItem("rad:stats", JSON.stringify(s)); }catch(e){} }
+function noteResult(key, correct){
+  const s = loadStats();
+  const e = s[key] || {c:0, w:0};
+  if(correct) e.c++; else e.w++;
+  s[key] = e; saveStats(s);
+}
+function masteryPct(keys){
+  const s = loadStats();
+  let done = 0;
+  keys.forEach(k=>{ if(s[k] && s[k].c > 0) done++; });
+  return keys.length ? Math.round(done/keys.length*100) : 0;
+}
+
+function star(filled){
+  return `<svg viewBox="0 0 20 20" fill="${filled?'var(--gold)':'var(--paper-edge)'}"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L10 15l-5.6 3.1 1.4-6.3L1 8.5l6.4-.6z"/></svg>`;
+}
+function starsRow(n){
+  let out=""; for(let i=0;i<5;i++) out += star(i<n);
+  return `<div class="stars">${out}</div>`;
+}
+
+/* ============================================================
+   Bildschirme
+   ============================================================ */
+const app = document.getElementById("app");
+let session = null;
+
+function header(){
+  return `<div class="top"><div class="badge">🚲</div>
+    <div><h1>Fahrrad-Führerschein</h1><p>Verkehrszeichen, Vorfahrt und Regeln üben</p></div></div>`;
+}
+
+function renderStart(){
+  const signKeys = signQuestions().map(q=>q.key);
+  const rowKeys = RIGHT_OF_WAY.map(q=>q.key);
+  const ruleKeys = RULES.map(q=>q.key);
+  const all = signKeys.concat(rowKeys, ruleKeys);
+  app.innerHTML = `
+    <a class="back" href="../">← Zurück zur Fächerauswahl</a>
+    ${header()}
+    <div class="stat"><span>Insgesamt geschafft</span><div class="bar"><i style="width:${masteryPct(all)}%"></i></div><span>${masteryPct(all)}%</span></div>
+    <div class="modes">
+      <button class="mode" data-mode="signs"><div class="ic">🚸</div>
+        <div><h3>Verkehrszeichen</h3><div class="sub">${SIGN_IDS.length} Schilder erkennen · ${masteryPct(signKeys)}% geschafft</div></div></button>
+      <button class="mode" data-mode="row"><div class="ic">🚦</div>
+        <div><h3>Vorfahrt</h3><div class="sub">Wer fährt zuerst? · ${masteryPct(rowKeys)}% geschafft</div></div></button>
+      <button class="mode" data-mode="rules"><div class="ic">📋</div>
+        <div><h3>Regeln & Fahrrad</h3><div class="sub">Ausrüstung und Verhalten · ${masteryPct(ruleKeys)}% geschafft</div></div></button>
+      <button class="mode exam" data-mode="exam"><div class="ic">🏅</div>
+        <div><h3>Prüfung üben</h3><div class="sub">15 gemischte Fragen wie im Test</div></div></button>
+    </div>
+    <div class="modes" style="margin-top:16px;">
+      <button class="mode" data-mode="gallery"><div class="ic">📖</div>
+        <div><h3>Schilder nachschlagen</h3><div class="sub">Alle Schilder mit Erklärung</div></div></button>
+    </div>
+    <div class="sheet">
+      <h3>Das Wichtigste in Kürze</h3>
+      <ul>
+        <li><b>Reihenfolge:</b> Polizist → Ampel → Schilder → rechts vor links</li>
+        <li><b>Abbiegen:</b> umschauen → Handzeichen → umschauen → abbiegen</li>
+        <li><b>Fahrrad:</b> zwei Bremsen, Klingel, Licht vorne weiß / hinten rot, Reflektoren</li>
+        <li><b>Zebrastreifen:</b> absteigen und schieben</li>
+      </ul>
+    </div>`;
+  app.querySelectorAll("[data-mode]").forEach(b=>{
+    b.onclick = ()=>{
+      const m = b.getAttribute("data-mode");
+      if(m==="gallery") renderGallery();
+      else startSession(m);
+    };
+  });
+}
+
+function renderGallery(){
+  app.innerHTML = `
+    <a class="back" href="#" id="back-start">← Zurück</a>
+    ${header()}
+    <h2 style="font-size:19px;margin:22px 0 4px;">Alle Schilder</h2>
+    <div class="sign-gallery">
+      ${SIGN_IDS.map(id=>`<figure>${signSvg(id)}
+        <figcaption><b>${SIGNS[id].name}</b><br>${SIGNS[id].meaning}</figcaption></figure>`).join("")}
+    </div>`;
+  app.querySelector("#back-start").onclick = e=>{ e.preventDefault(); renderStart(); };
+}
+
+function pickQuestions(mode){
+  const shuffle = a => a.slice().sort(()=>Math.random()-0.5);
+  if(mode==="signs") return shuffle(signQuestions()).slice(0, 12);
+  if(mode==="row") return shuffle(RIGHT_OF_WAY);
+  if(mode==="rules") return shuffle(RULES);
+  const mix = shuffle(signQuestions()).slice(0,6)
+    .concat(shuffle(RIGHT_OF_WAY).slice(0,5))
+    .concat(shuffle(RULES).slice(0,4));
+  return shuffle(mix);
+}
+
+function startSession(mode){
+  session = {mode, qs: pickQuestions(mode), idx:0, right:0, wrong:0, marks:[]};
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = session.qs[session.idx];
+  const opts = q.options.slice().sort(()=>Math.random()-0.5);
+  const twoCols = opts.every(o=>o.signOption) || opts.length<=3;
+  app.innerHTML = `
+    <a class="back" href="#" id="abort">← Übung beenden</a>
+    <div class="progressdots">
+      ${session.qs.map((_,i)=>`<i class="${session.marks[i]||(i===session.idx?'now':'')}"></i>`).join("")}
+    </div>
+    <div class="card">
+      <h3>${q.head}</h3>
+      ${q.visual ? (q.visual.startsWith("<div") ? q.visual : `<div class="scene">${q.visual}</div>`) : ``}
+      ${q.question ? `<div class="qtext">${q.question}</div>` : ``}
+      <div class="choices ${twoCols?'two':''}">
+        ${opts.map((o,i)=>`<button class="choice ${o.signOption?'sign':''}" data-i="${i}">${o.html || o.label}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`;
+  app.querySelector("#abort").onclick = e=>{ e.preventDefault(); renderStart(); };
+  const fb = app.querySelector("#fb");
+  let attempts = 0, settled = false;
+  app.querySelectorAll(".choice").forEach((btn,i)=>{
+    btn.onclick = ()=>{
+      if(settled || btn.classList.contains("wrong")) return;
+      const o = opts[i];
+      attempts++;
+      if(o.correct){
+        settled = true;
+        btn.classList.add("correct");
+        fb.className = "feedback ok";
+        fb.innerHTML = (attempts===1 ? "Richtig! 🎉" : "Richtig!") + `<div class="why">${q.why}</div>`;
+        /* "done" zählt nur der Treffer im ersten Anlauf – der zweite gilt als geübt, nicht als gekonnt. */
+        session.marks[session.idx] = attempts===1 ? "done" : "miss";
+        session.right++;
+        noteResult(q.key, attempts===1);
+        setTimeout(next, attempts===1 ? 1900 : 2600);
+      }else if(attempts<2){
+        btn.classList.add("wrong");
+        btn.disabled = true;
+        fb.className = "feedback no";
+        fb.textContent = "Noch nicht – überleg nochmal.";
+      }else{
+        settled = true;
+        btn.classList.add("wrong");
+        app.querySelectorAll(".choice").forEach((b,j)=>{ if(opts[j].correct) b.classList.add("correct"); });
+        fb.className = "feedback no";
+        fb.innerHTML = `Das war leider falsch.<div class="why">${q.why}</div>`;
+        session.marks[session.idx] = "miss";
+        session.wrong++;
+        noteResult(q.key, false);
+        setTimeout(next, 3200);
+      }
+    };
+  });
+}
+
+function next(){
+  session.idx++;
+  if(session.idx >= session.qs.length) renderSummary();
+  else renderQuestion();
+}
+
+function renderSummary(){
+  const total = session.qs.length;
+  const firstTry = session.marks.filter(m=>m==="done").length;
+  const pct = Math.round(firstTry/total*100);
+  const stars = pct>=95?5:pct>=85?4:pct>=70?3:pct>=50?2:pct>0?1:0;
+  const titel = session.mode==="exam"
+    ? (pct>=80 ? "Bestanden! 🏅" : "Fast – übt das nochmal")
+    : "Übung geschafft!";
+  app.innerHTML = `
+    ${header()}
+    <div class="card" style="margin-top:20px;">
+      <div style="font-size:42px;">${pct>=80?"🏅":"💪"}</div>
+      <h3 style="color:var(--ink);font-size:20px;margin:8px 0 2px;">${titel}</h3>
+      ${starsRow(stars)}
+      <div class="result-line">${firstTry} von ${total} auf Anhieb richtig</div>
+      ${session.mode==="exam" && pct<80 ? `<div class="why" style="margin-top:10px;">Bei der echten Prüfung solltest du fast alles richtig haben – üb die schwierigen Bereiche nochmal einzeln.</div>` : ``}
+      <div class="btn-row">
+        <button class="btn btn-primary" id="again">Nochmal üben</button>
+        <button class="btn btn-ghost" id="home">Zur Übersicht</button>
+      </div>
+    </div>`;
+  app.querySelector("#again").onclick = ()=>startSession(session.mode);
+  app.querySelector("#home").onclick = renderStart;
+}
+
+renderStart();
+})();
+</script>
+</body>
+</html>
