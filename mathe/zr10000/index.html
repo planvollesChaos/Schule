@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zahlenraum 10.000</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#FAFBFF; --card:#FFFFFF; --card2:#F1F4FB; --edge:#DFE4F0; --edge2:#C3CCE2;
+  --ink:#171A23; --ink2:#525B70; --ink3:#8790A6;
+  --blue:#3D6BD6; --blue-d:#2C51AC; --blue-soft:#E8EEFC;
+  --violet:#8B6FC4; --violet-soft:#F0EAFA;
+  --mint:#18876C; --mint-soft:#E1F4EE;
+  --amber:#B97609; --amber-soft:#FBF0DC;
+  --bad:#C24A4A; --bad-soft:#FBE9E9;
+  --shadow:0 1px 0 rgba(20,25,40,.04), 0 12px 26px -20px rgba(20,25,40,.6);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101219; --card:#1A1D27; --card2:#222634; --edge:#2E3446; --edge2:#3C445A;
+    --ink:#EEF1F8; --ink2:#B2BACC; --ink3:#848DA3;
+    --blue:#7FA3F5; --blue-d:#A9C1FF; --blue-soft:#1E2740;
+    --violet:#B79AE8; --violet-soft:#272134;
+    --mint:#5FCFAE; --mint-soft:#15302A;
+    --amber:#E8B45F; --amber-soft:#332816;
+    --bad:#E88A8A; --bad-soft:#352022;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 14px 30px -22px #000;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;background:
+    radial-gradient(circle at 12% 4%, hsl(222 70% 58% / .10), transparent 44%),
+    radial-gradient(circle at 92% 88%, hsl(263 55% 62% / .09), transparent 46%),
+    var(--bg);
+  color:var(--ink);font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif;font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+}
+h1,h2,h3{font-family:"Baloo 2",sans-serif;margin:0;line-height:1.2}
+button{font:inherit;color:inherit;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:8px}
+.wrap{max-width:720px;margin:0 auto;padding:0 18px calc(60px + env(safe-area-inset-bottom))}
+
+/* Kopfleiste */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--edge)}
+.top .in{max-width:720px;margin:0 auto;padding:9px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back{text-decoration:none;color:var(--blue-d);font-weight:700;font-size:13.5px;flex:none;
+  border:2px solid var(--edge);border-radius:999px;padding:5px 13px;background:var(--card);white-space:nowrap}
+.back:hover{border-color:var(--violet)}
+.brand{font-family:"Baloo 2";font-weight:700;font-size:17px;margin-right:auto;display:flex;align-items:center;gap:7px}
+.who{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--ink2);flex:none;
+  border:2px solid var(--edge);border-radius:999px;padding:3px 12px 3px 3px;background:var(--card)}
+.who i{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;font-style:normal;font-size:11px;font-weight:800;font-family:"Baloo 2"}
+.iconbtn{background:var(--card);border:2px solid var(--edge);border-radius:12px;width:40px;height:40px;
+  cursor:pointer;font-size:16px;display:grid;place-items:center;flex:none}
+.iconbtn:hover{border-color:var(--violet)}
+.clock{font-family:"Baloo 2";font-weight:700;font-size:15px;color:var(--ink2);font-variant-numeric:tabular-nums;flex:none}
+
+/* Startseite */
+.lead{margin:22px 0 0;font-size:15px;color:var(--ink2);max-width:52ch}
+h1.page{font-family:"Baloo 2";font-size:29px;font-weight:800;color:var(--blue-d);margin-top:22px}
+h2.sec{font-size:17px;margin:32px 0 13px}
+h2.sec span{font-size:13px;font-weight:400;color:var(--ink3);font-family:"Atkinson Hyperlegible",sans-serif}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px}
+.tile{display:flex;gap:13px;align-items:flex-start;text-align:left;width:100%;cursor:pointer;
+  background:var(--card);border:2px solid var(--edge);border-radius:18px;padding:16px 15px;
+  box-shadow:var(--shadow);transition:transform .12s ease,border-color .12s ease}
+.tile:hover{transform:translateY(-3px);border-color:var(--violet)}
+.tile .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:21px;flex:none;
+  background:var(--blue-soft)}
+.tile.test .ic{background:var(--violet-soft)}
+.tile.again .ic{background:var(--amber-soft)}
+.tile h3{font-size:16.5px;margin-bottom:2px}
+.tile .sub{font-size:12.5px;color:var(--ink3);line-height:1.45}
+.tile .res{margin-top:7px;font-size:12.5px;font-weight:700;color:var(--ink2);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.stars{letter-spacing:1px;color:var(--amber);font-size:14px}
+.stars b{color:var(--edge2);font-weight:400}
+.pill{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--mint-soft);color:var(--mint)}
+.pill.neu{background:var(--blue-soft);color:var(--blue-d)}
+
+/* Übungsfläche */
+.stage{background:var(--card);border:2px solid var(--edge);border-radius:22px;box-shadow:var(--shadow);
+  margin-top:20px;overflow:hidden}
+.stage .head{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:2px solid var(--edge)}
+.stage .head .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:18px;
+  background:var(--blue-soft);flex:none}
+.stage .head h2{font-size:16.5px}
+.stage .head .cnt{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
+.bar{display:flex;gap:3px;padding:0 16px;margin:12px 0 0}
+.bar i{flex:1;height:6px;border-radius:99px;background:var(--edge)}
+.bar i.done{background:var(--mint)}
+.bar i.miss{background:var(--bad)}
+.bar i.now{background:var(--blue)}
+.body{padding:18px 16px 22px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.q{font-family:"Baloo 2";font-size:clamp(19px,5vw,24px);font-weight:700;text-align:center;max-width:30ch;line-height:1.3}
+.q b{color:var(--blue-d)}
+.tip{font-size:14px;color:var(--ink2);text-align:center;max-width:44ch}
+.tip b{color:var(--ink)}
+
+/* Eingaben */
+input[type=text]{font-size:16px}
+.numin{width:min(210px,64vw);height:60px;text-align:center;font-family:"Baloo 2";font-size:28px;font-weight:700;
+  border-radius:14px;border:2px solid var(--edge2);background:var(--card2);color:var(--ink);font-variant-numeric:tabular-nums}
+.numin:focus{border-color:var(--blue);outline:none}
+.numin:disabled{opacity:1;border-color:var(--mint);background:var(--mint-soft);color:var(--mint)}
+.row{display:flex;gap:8px;align-items:flex-end;justify-content:center;flex-wrap:wrap;width:100%}
+.col{display:flex;flex-direction:column;align-items:center;gap:5px}
+.lab{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);text-align:center;line-height:1.2}
+.cin{width:clamp(70px,20vw,94px);height:54px;text-align:center;font-family:"Baloo 2";font-size:22px;font-weight:700;
+  border-radius:12px;border:2px solid var(--edge2);background:var(--card2);color:var(--ink);font-variant-numeric:tabular-nums}
+.cin.d1{width:clamp(50px,15vw,66px)}
+.cin:focus{border-color:var(--blue);outline:none}
+.cin.ok{border-color:var(--mint);background:var(--mint-soft);color:var(--mint)}
+.cin.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.row.four{gap:5px}
+.row.four .cin{width:clamp(58px,15.5vw,86px);font-size:20px}
+.mid{font-family:"Baloo 2";font-size:clamp(23px,7vw,30px);font-weight:700;height:54px;display:grid;place-items:center;
+  padding:0 3px;font-variant-numeric:tabular-nums}
+.op{font-family:"Baloo 2";font-size:19px;color:var(--ink3);height:54px;display:grid;place-items:center}
+.fix{width:clamp(50px,15vw,66px);height:54px;display:grid;place-items:center;font-family:"Baloo 2";font-size:22px;
+  font-weight:700;border-radius:12px;background:var(--blue-soft);color:var(--blue-d);border:2px solid var(--edge)}
+
+.opts{display:flex;flex-direction:column;gap:9px;width:min(460px,100%)}
+.opt{display:flex;gap:11px;align-items:center;text-align:left;cursor:pointer;min-height:52px;
+  background:var(--card2);border:2px solid var(--edge);border-radius:14px;padding:13px 14px;font-weight:700;font-size:15px}
+.opt:hover:not(:disabled){border-color:var(--violet)}
+.opt:disabled{cursor:default}
+.opt .mk{width:26px;height:26px;border-radius:8px;background:var(--blue-soft);color:var(--blue-d);flex:none;
+  display:grid;place-items:center;font-family:"Baloo 2";font-size:13px;font-weight:700}
+.opt .wd{min-width:0;overflow-wrap:anywhere}
+.opt.right{border-color:var(--mint);background:var(--mint-soft);color:var(--mint)}
+.opt.right .mk{background:var(--mint);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.opt.wrong .mk{background:var(--bad);color:#fff}
+
+.word{font-family:"Baloo 2";font-size:clamp(18px,4.8vw,25px);font-weight:700;text-align:center;
+  color:var(--blue-d);word-break:break-word;max-width:100%;line-height:1.3}
+.wbox{min-height:58px;width:min(460px,100%);border-radius:14px;border:2px dashed var(--edge2);background:var(--card2);
+  display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;padding:9px 11px}
+.wbox .ph{color:var(--ink3);font-size:13px}
+.wp{background:var(--blue-soft);color:var(--blue-d);border:none;border-radius:8px;padding:6px 9px;
+  font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;width:min(460px,100%)}
+.chip{background:var(--card2);border:2px solid var(--edge);border-radius:12px;padding:10px 13px;
+  font-weight:700;font-size:15px;cursor:pointer;min-height:46px}
+.chip:hover{border-color:var(--violet)}
+.chip.used{opacity:.3;pointer-events:none}
+
+/* Zahlenstrahl */
+.nlwrap{width:min(540px,100%)}
+.nl{display:block;width:100%;height:auto;overflow:visible}
+.nl text{font-family:"Atkinson Hyperlegible",sans-serif;font-weight:700;fill:var(--ink2)}
+.nl .ax{stroke:var(--ink);stroke-width:2.4;fill:none;stroke-linecap:round}
+.nl .tk{stroke:var(--ink2);stroke-width:2.2}
+.nl .tm{stroke:var(--ink3);stroke-width:1.3}
+.nl .hit{cursor:pointer}
+.nl .hit:hover{fill:color-mix(in srgb,var(--blue) 15%,transparent)}
+.mk2{pointer-events:none}
+.mk2 .h{fill:var(--violet)} .mk2 text{fill:var(--violet)}
+.mk2.ok .h{fill:var(--mint)} .mk2.ok text{fill:var(--mint)}
+.mk2.no .h{fill:var(--bad)} .mk2.no text{fill:var(--bad)}
+
+/* Rückmeldung und Knöpfe */
+.fb{width:min(470px,100%);border-radius:14px;padding:12px 15px;font-size:14.5px;display:none}
+.fb.show{display:block;animation:pop .2s}
+.fb.ok{background:var(--mint-soft);color:var(--mint)}
+.fb.no{background:var(--bad-soft);color:var(--bad)}
+.fb.info{background:var(--blue-soft);color:var(--blue-d)}
+@keyframes pop{from{transform:translateY(4px);opacity:0}to{transform:none;opacity:1}}
+.acts{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;width:100%}
+.btn{background:var(--blue);color:#fff;border:2px solid var(--blue);border-radius:14px;padding:13px 22px;
+  font-family:"Baloo 2";font-size:16px;font-weight:700;cursor:pointer;min-height:48px}
+.btn:hover{background:var(--blue-d);border-color:var(--blue-d)}
+.btn.ghost{background:transparent;color:var(--ink2);border-color:var(--edge2)}
+.btn.ghost:hover{color:var(--blue-d);border-color:var(--violet);background:transparent}
+
+/* Ergebnis */
+.result{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:26px 16px 24px}
+.result .big{font-family:"Baloo 2";font-size:44px;font-weight:800;line-height:1}
+.result .starbig{font-size:30px;letter-spacing:4px;color:var(--amber)}
+.result .starbig b{color:var(--edge2);font-weight:400}
+.misses{width:min(500px,100%);text-align:left;background:var(--card2);border:2px solid var(--edge);
+  border-radius:16px;padding:13px 15px}
+.misses h3{font-size:15px;margin-bottom:8px}
+.misses ol{margin:0;padding-left:19px;font-size:13.5px;color:var(--ink2)}
+.misses li{margin-bottom:7px}
+.misses b{color:var(--mint)}
+[hidden]{display:none !important}
+@media(max-width:420px){
+  .wrap{padding:0 12px calc(60px + env(safe-area-inset-bottom))}
+  .top .in{padding:8px 12px}
+  .brand{font-size:15.5px}
+  .body{padding:16px 10px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="in">
+  <a class="back" href="../">← Mathe</a>
+  <div class="brand">🧭 Zahlenraum 10.000</div>
+  <span class="clock" id="clock" hidden>0:00</span>
+  <span class="who" id="who" hidden></span>
+  <button class="iconbtn" id="sound" aria-label="Ton an oder aus">🔊</button>
+</div></div>
+
+<div class="wrap">
+  <section id="view-home">
+    <h1 class="page">Trainingsplan</h1>
+    <p class="lead">Fünf Bereiche, jeder mit zehn Aufgaben. Wenn die sitzen, kommt der Probetest –
+      der fragt alles gemischt ab, so wie in der Schule.</p>
+    <h2 class="sec">Üben <span>· je 10 Aufgaben</span></h2>
+    <div class="tiles" id="areas"></div>
+    <h2 class="sec">Testen <span>· alles gemischt</span></h2>
+    <div class="tiles" id="tests"></div>
+  </section>
+
+  <section id="view-run" hidden>
+    <div class="stage">
+      <div class="head">
+        <span class="ic" id="rIcon">📏</span>
+        <div><div class="cnt" id="rCount">Aufgabe 1 von 10</div><h2 id="rName">Zahlenstrahl</h2></div>
+      </div>
+      <div class="bar" id="rBar"></div>
+      <div class="body" id="rBody"></div>
+    </div>
+    <div class="acts" style="margin-top:16px">
+      <button class="btn ghost" id="abort">Abbrechen</button>
+    </div>
+  </section>
+
+  <section id="view-done" hidden></section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------------------------------------------------------------
+   Orientierung im Zahlenraum 10.000 – eigenständige Trainings-App.
+   Kein Bezug zur Wachtel-Geschichte aus der Klasse-3-Wiederholung:
+   hier wird nur geübt und getestet.
+   Gespeichert wird unter zr10k:<profil-id> im localStorage.
+----------------------------------------------------------------- */
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const n=document.createElement(t);if(c)n.className=c;if(h!=null)n.innerHTML=h;return n;};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const fmt=n=>n.toLocaleString('de-DE');
+const dg=(n,l)=>String(n).padStart(l,'0').split('').map(Number);
+const digitsOf=s=>String(s).replace(/\D/g,'');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Ton ---------- */
+let ac=null,muted=false;
+function tone(f,t0,d,v,ty){if(muted)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+  const o=ac.createOscillator(),g=ac.createGain();o.type=ty||'sine';o.frequency.value=f;
+  g.gain.setValueAtTime(0,ac.currentTime+t0);g.gain.linearRampToValueAtTime(v,ac.currentTime+t0+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t0+d);o.connect(g);g.connect(ac.destination);
+  o.start(ac.currentTime+t0);o.stop(ac.currentTime+t0+d+.02);}
+const sOk=()=>{tone(700,0,.1,.13,'triangle');tone(1050,.07,.14,.1,'triangle');};
+const sNo=()=>{tone(250,0,.14,.08);tone(200,.08,.16,.07);};
+const sTick=()=>tone(620,0,.05,.05);
+const sWin=()=>{[587,740,880,1175].forEach((f,i)=>tone(f,i*.1,.32,.12,'triangle'));};
+
+/* ---------- Profil und Speicher ---------- */
+function kidId(){try{return localStorage.getItem('wex:currentKid')||null;}catch(e){return null;}}
+function storeKey(){const k=kidId();return k?'zr10k:'+k:'zr10k';}
+let S={best:{},last:{},wrong:[],muted:false};
+function load(){try{const r=localStorage.getItem(storeKey());if(r)Object.assign(S,JSON.parse(r));}catch(e){}}
+function save(){try{localStorage.setItem(storeKey(),JSON.stringify(S));}catch(e){}}
+function showWho(){
+  const c=$('#who'),id=kidId();if(!id)return;
+  let kids=[];try{kids=JSON.parse(localStorage.getItem('wex:kids')||'[]');}catch(e){}
+  if(!kids.length)kids=[{id:'kid-ellena',name:'Ellena',color:'#8B6FC4'},
+                        {id:'kid-merle',name:'Merle',color:'#3D6BD6'},
+                        {id:'kid-eltern',name:'Eltern',color:'#4A4750'}];
+  const k=kids.find(x=>x.id===id);if(!k)return;
+  c.innerHTML='<i style="background:'+(k.color||'#8B6FC4')+'">'+(k.name||'?')[0].toUpperCase()+'</i>'+k.name;
+  c.hidden=false;}
+
+/* ---------- Zahlwörter ---------- */
+const W1=['null','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun'];
+const W10=['zehn','elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn'];
+const W20=['','zehn','zwanzig','dreißig','vierzig','fünfzig','sechzig','siebzig','achtzig','neunzig'];
+function w99(n){if(n<10)return[W1[n]];if(n<20)return[W10[n-10]];
+  const z=Math.floor(n/10),e=n%10;return e?[e===1?'ein':W1[e],'und',W20[z]]:[W20[z]];}
+function wParts(n){if(n===0)return['null'];
+  const out=[],t=Math.floor(n/1000),r=n%1000;
+  if(t){out.push.apply(out,t===1?['ein']:w99(t));out.push('tausend');}
+  const h=Math.floor(r/100),k=r%100;
+  if(h){out.push(h===1?'ein':W1[h]);out.push('hundert');}
+  if(k)out.push.apply(out,w99(k));
+  return out;}
+const wordOf=n=>wParts(n).join('');
+
+/* ---------- Aufgaben ---------- */
+const STELLEN=['Tausender','Hunderter','Zehner','Einer'];
+const STELLEN1=['T','H','Z','E'];
+
+function makeStrahl(n){
+  const forms=[
+    ()=>({from:0,to:10000,div:10,lab:2,idx:ri(1,9)}),
+    ()=>{const b=ri(1,8)*1000;return{from:b,to:b+1000,div:10,lab:5,idx:ri(1,9)};},
+    ()=>{const b=ri(11,97)*100;return{from:b,to:b+100,div:10,lab:5,idx:ri(1,9)};},
+    ()=>{const b=ri(1,8)*1000;return{from:b,to:b+1000,div:10,lab:10,idx:ri(1,9)};},
+    ()=>{const b=ri(2,9)*1000;return{from:b-1000,to:b,div:10,lab:2,idx:ri(1,9)};}
+  ];
+  const out=[];
+  for(let i=0;i<n;i++){const f=forms[i%forms.length]();
+    f.step=(f.to-f.from)/f.div;f.val=f.from+f.step*f.idx;
+    f.k='strahl';f.mode=i%2?'setzen':'lesen';out.push(f);}
+  return shuffle(out);}
+
+function makeNachbar(n){
+  const forms=[
+    ()=>ri(1,9)*1000,
+    ()=>ri(1,9)*1000+ri(1,9)*100,
+    ()=>ri(1,9)*1000+ri(0,9)*100+ri(0,9)*10+9,
+    ()=>ri(1,9)*1000+ri(0,9)*100+99,
+    ()=>ri(1001,9899)
+  ];
+  const out=[];
+  for(let i=0;i<n;i++){let v=forms[i%forms.length]();
+    out.push({k:'nachbar',mode:'zahl',v:Math.min(Math.max(v,1001),9999)});}
+  return out;}
+
+function makeNachbarRund(n){
+  const us=[10,100,1000],out=[];
+  for(let i=0;i<n;i++){const u=us[i%us.length];let v;
+    do{v=ri(1001,9899);}while(v%u===0);
+    out.push({k:'nachbar',mode:'rund',u,v});}
+  return out;}
+
+function makeNachbarMix(n){
+  const a=Math.ceil(n/2);
+  return shuffle(makeNachbar(a).concat(makeNachbarRund(n-a)));}
+
+function makeStw(n){const out=[];
+  for(let i=0;i<n;i++){
+    const v=i%4===3?ri(1,9)*1000+ri(0,9)*10+ri(0,9)
+                   :ri(1,9)*1000+ri(0,9)*100+ri(0,9)*10+ri(0,9);
+    const mode=['ein','aus','stelle'][i%3];
+    const t={k:'stw',v,mode};
+    if(mode==='stelle'){let p;do{p=ri(0,3);}while(dg(v,4)[p]===0);t.p=p;}
+    out.push(t);}
+  return shuffle(out);}
+
+function makeZerleg(n){const out=[];
+  for(let i=0;i<n;i++){
+    if(i%2){const h=ri(0,1)?ri(1,9)*100:0;
+      out.push({k:'zerleg',mode:'aus',v:ri(1,9)*1000+h+ri(0,9)*10+ri(1,9)});}
+    else out.push({k:'zerleg',mode:'in',v:ri(1,9)*1000+ri(1,9)*100+ri(1,9)*10+ri(1,9)});}
+  return shuffle(out);}
+
+function makeZwort(n){const out=[],seen={};
+  const modes=['lesen','wahl','bau'];
+  while(out.length<n){
+    const mode=modes[out.length%3];
+    const v=mode==='bau'?ri(1,9)*1000+ri(0,9)*100+ri(1,9)*10+ri(1,9)
+                        :ri(1,9)*1000+ri(0,9)*100+ri(0,9)*10+ri(0,9);
+    if(seen[v])continue;seen[v]=1;
+    out.push({k:'zwort',v,mode});}
+  return shuffle(out);}
+
+function zwFalsch(v){const d=dg(v,4),o=[];
+  if(d[3]!==d[2]&&d[3]!==0&&d[2]!==0)o.push(d[0]*1000+d[1]*100+d[3]*10+d[2]);
+  o.push(d[0]*1000+(d[1]===9?8:d[1]+1)*100+d[2]*10+d[3]);
+  o.push((d[0]===9?8:d[0]+1)*1000+d[1]*100+d[2]*10+d[3]);
+  if(d[2]!==0)o.push(d[0]*1000+d[1]*100+d[3]);
+  return shuffle(o.filter(x=>x!==v&&x>=1000)).slice(0,2);}
+
+/* ---------- Bereiche und Tests ---------- */
+const AREAS=[
+  {id:'strahl', ic:'📏', name:'Zahlenstrahl',      sub:'Zahlen ablesen und selbst eintragen', mk:makeStrahl},
+  {id:'nachbar',ic:'👣', name:'Nachbarzahlen',     sub:'Vorgänger, Nachfolger, Nachbarzehner', mk:makeNachbarMix},
+  {id:'stw',    ic:'🧮', name:'Stellenwerttafel',  sub:'T · H · Z · E, in beide Richtungen',   mk:makeStw},
+  {id:'zerleg', ic:'✂️', name:'Zahlen zerlegen',   sub:'4.276 = 4.000 + 200 + 70 + 6',         mk:makeZerleg},
+  {id:'zwort',  ic:'✍️', name:'Zahlwörter',        sub:'lesen, erkennen und schreiben',        mk:makeZwort}
+];
+const TESTS=[
+  {id:'kurz', ic:'⏱️', name:'Kurztest',           sub:'12 Aufgaben aus allen fünf Bereichen', n:12},
+  {id:'gross',ic:'🏁', name:'Großer Probetest',   sub:'24 Aufgaben mit Zeit – wie in der Schule', n:24, timer:true}
+];
+const byArea=id=>AREAS.find(a=>a.id===id);
+
+function mixed(n){
+  const per=Math.floor(n/AREAS.length),rest=n-per*AREAS.length;
+  let out=[];
+  AREAS.forEach((a,i)=>out=out.concat(a.mk(per+(i<rest?1:0))));
+  return shuffle(out);}
+
+/* ---------- Aufgabe in Worte fassen (für die Fehlerliste) ---------- */
+function describe(t){
+  const v=t.v;
+  if(t.k==='strahl')return{q:`Zahlenstrahl von ${fmt(t.from)} bis ${fmt(t.to)}`,a:fmt(t.val)};
+  if(t.k==='nachbar'){
+    if(t.mode==='zahl')return{q:`Vorgänger und Nachfolger von ${fmt(v)}`,a:`${fmt(v-1)} und ${fmt(v+1)}`};
+    const b=Math.floor(v/t.u)*t.u,nm={10:'Nachbarzehner',100:'Nachbarhunderter',1000:'Nachbartausender'}[t.u];
+    return{q:`${nm} von ${fmt(v)}`,a:`${fmt(b)} und ${fmt(b+t.u)}`};}
+  if(t.k==='stw'){
+    const d=dg(v,4),tab=d.map((x,i)=>x+' '+STELLEN1[i]).join(' · ');
+    if(t.mode==='ein')return{q:`${fmt(v)} in die Stellenwerttafel`,a:tab};
+    if(t.mode==='aus')return{q:tab,a:fmt(v)};
+    return{q:`Wie viele ${STELLEN[t.p]} hat ${fmt(v)}?`,a:String(d[t.p])};}
+  if(t.k==='zerleg'){
+    const d=dg(v,4),p=[d[0]*1000,d[1]*100,d[2]*10,d[3]],txt=p.filter(x=>x>0).map(fmt).join(' + ');
+    return t.mode==='in'?{q:`${fmt(v)} zerlegen`,a:`${fmt(p[0])} + ${fmt(p[1])} + ${p[2]} + ${p[3]}`}
+                        :{q:txt,a:fmt(v)};}
+  if(t.mode==='lesen')return{q:wordOf(v),a:fmt(v)};
+  if(t.mode==='wahl')return{q:`Zahlwort für ${fmt(v)}`,a:wordOf(v)};
+  return{q:`Zahlwort für ${fmt(v)} schreiben`,a:wordOf(v)};}
+const sig=t=>[t.k,t.mode,t.v,t.from,t.idx,t.u,t.p].join('|');
+
+/* ---------- Startseite ---------- */
+const starStr=s=>'★'.repeat(s)+'<b>'+'★'.repeat(3-s)+'</b>';
+function starsFor(r,t){const p=r/t;return p>=.9?3:p>=.75?2:p>=.5?1:0;}
+function tile(o,cls,onclick){
+  const b=el('button','tile'+(cls?' '+cls:''));
+  b.innerHTML=`<span class="ic">${o.ic}</span><span><h3>${o.name}</h3><span class="sub">${o.sub}</span>`
+    +(o.res?`<span class="res">${o.res}</span>`:'')+`</span>`;
+  b.onclick=onclick;return b;}
+function paintHome(){
+  const a=$('#areas');a.innerHTML='';
+  AREAS.forEach(x=>{
+    const b=S.best[x.id],l=S.last[x.id];
+    const res=b?`<span class="stars">${starStr(b.stars)}</span> beste Runde ${b.r}/${b.t}`
+                +(l&&l.d!==b.d?` · zuletzt ${l.r}/${l.t}`:'')
+              :'<span class="pill neu">noch nicht geübt</span>';
+    a.appendChild(tile({...x,res},'',()=>startRun({
+      id:x.id,name:x.name,ic:x.ic,tasks:x.mk(10)})));});
+  const t=$('#tests');t.innerHTML='';
+  TESTS.forEach(x=>{
+    const b=S.best[x.id];
+    const res=b?`<span class="stars">${starStr(b.stars)}</span> bestes Ergebnis ${b.r}/${b.t}`
+                +(b.sec?` · ${zeit(b.sec)}`:'')
+              :'<span class="pill neu">noch kein Versuch</span>';
+    t.appendChild(tile({...x,res},'test',()=>startRun({
+      id:x.id,name:x.name,ic:x.ic,tasks:mixed(x.n),timer:x.timer})));});
+  if(S.wrong.length>=4){
+    const n=Math.min(S.wrong.length,12);
+    t.appendChild(tile({ic:'🔁',name:'Deine Fehler nochmal',
+      sub:`${S.wrong.length} Aufgaben liegen auf dem Stapel`,
+      res:'<span class="pill">was du richtig hast, fliegt vom Stapel</span>'},'again',
+      ()=>startRun({id:'fehler',name:'Deine Fehler nochmal',ic:'🔁',
+        tasks:shuffle(S.wrong).slice(0,n).map(x=>Object.assign({},x)),pool:true})));}
+}
+function zeit(sec){const m=Math.floor(sec/60);return m+':'+String(sec%60).padStart(2,'0');}
+
+/* ---------- Ablauf ---------- */
+let run=null,tick=null;
+const view=n=>{['home','run','done'].forEach(v=>$('#view-'+v).hidden=v!==n);};
+function startRun(cfg){
+  run=Object.assign({i:0,right:0,first:true,wrong:[],t0:Date.now()},cfg);
+  $('#rIcon').textContent=cfg.ic;$('#rName').textContent=cfg.name;
+  view('run');
+  if(cfg.timer){$('#clock').hidden=false;$('#clock').textContent='0:00';
+    tick=setInterval(()=>{$('#clock').textContent=zeit(Math.round((Date.now()-run.t0)/1000));},1000);}
+  paintTask();
+  scrollTo({top:0,behavior:reduce?'auto':'smooth'});}
+function stopTimer(){if(tick){clearInterval(tick);tick=null;}$('#clock').hidden=true;}
+function paintBar(){
+  const b=$('#rBar');b.innerHTML='';
+  run.tasks.forEach((t,i)=>{const s=i<run.i?(run.miss&&run.miss[i]?'miss':'done'):i===run.i?'now':'';
+    b.appendChild(el('i',s));});}
+function paintTask(){
+  run.first=true;paintBar();
+  $('#rCount').textContent=`Aufgabe ${run.i+1} von ${run.tasks.length}`;
+  const body=$('#rBody');body.innerHTML='';
+  const t=run.tasks[run.i];
+  ({strahl:rStrahl,nachbar:rNachbar,stw:rStw,zerleg:rZerleg,zwort:rZwort})[t.k](t,body);}
+function next(){
+  run.i++;
+  if(run.i>=run.tasks.length)return finish();
+  paintTask();}
+function good(){
+  const t=run.tasks[run.i];
+  if(run.first){run.right++;
+    if(run.pool)S.wrong=S.wrong.filter(x=>sig(x)!==sig(t));}
+  sOk();}
+function bad(){
+  const t=run.tasks[run.i];
+  if(run.first){
+    run.miss=run.miss||{};run.miss[run.i]=true;
+    run.wrong.push(describe(t));
+    if(!S.wrong.some(x=>sig(x)===sig(t))){S.wrong.unshift(t);S.wrong=S.wrong.slice(0,40);}
+  }
+  run.first=false;sNo();}
+const LOB=['Stark!','Genau!','Sitzt!','Perfekt!','Sauber!','Volltreffer!','Klasse!','Richtig!'];
+const lob=()=>LOB[ri(0,LOB.length-1)];
+
+/* Bausteine für die Aufgaben */
+function fbBox(body){const f=el('div','fb');body.appendChild(f);return f;}
+function weiter(body){
+  const r=el('div','acts'),b=el('button','btn',run.i+1>=run.tasks.length?'Ergebnis →':'Weiter →');
+  b.onclick=next;r.appendChild(b);body.appendChild(r);b.focus();}
+function numInput(body,label){
+  const i=el('input');i.type='text';i.inputMode='numeric';i.className='numin';
+  i.setAttribute('aria-label',label||'Zahl eintragen');
+  i.oninput=()=>{i.value=i.value.replace(/[^\d.]/g,'');};
+  body.appendChild(i);return i;}
+function pruefBtn(body,fn){
+  const r=el('div','acts'),b=el('button','btn','Prüfen');
+  b.onclick=fn;r.appendChild(b);body.appendChild(r);return b;}
+
+/* ---------- Zahlenstrahl ---------- */
+const NW=360,NH=96,NL=24,NR=336,NY=58;
+function nlBody(from,to,div,lab){
+  const st=(to-from)/div,X=i=>NL+(NR-NL)*i/div;
+  let s=`<line class="ax" x1="${NL-12}" y1="${NY}" x2="${NR+16}" y2="${NY}"/>`
+       +`<path class="ax" d="M${NR+16} ${NY} l-9 -5 M${NR+16} ${NY} l-9 5"/>`;
+  for(let i=0;i<=div;i++){const x=X(i),big=i%lab===0;
+    s+=`<line class="${big?'tk':'tm'}" x1="${x}" y1="${NY-(big?11:6)}" x2="${x}" y2="${NY+(big?11:6)}"/>`;
+    if(big)s+=`<text x="${x}" y="${NY+26}" text-anchor="middle" font-size="13">${fmt(from+st*i)}</text>`;}
+  return{s,X};}
+const nlMark=(x,lab,cls)=>`<g class="mk2 ${cls||''}"><path class="h" d="M${x} ${NY-5} l-7 -13 h14 Z"/>`
+  +(lab?`<text x="${x}" y="${NY-24}" text-anchor="middle" font-size="13">${lab}</text>`:'')+`</g>`;
+
+function rStrahl(t,body){
+  body.appendChild(el('div','q',t.mode==='lesen'?'Welche Zahl zeigt der Pfeil?':`Wo liegt <b>${fmt(t.val)}</b>?`));
+  body.appendChild(el('div','tip',t.mode==='lesen'
+    ?'Geh vom nächsten beschrifteten Strich aus und zähl in gleichen Schritten weiter.'
+    :'Tipp den richtigen Strich an.'));
+  const wrap=el('div','nlwrap');body.appendChild(wrap);
+  const g=nlBody(t.from,t.to,t.div,t.lab);
+  const paint=x=>{wrap.innerHTML=`<svg class="nl" viewBox="0 0 ${NW} ${NH}" role="img" aria-label="Zahlenstrahl von ${fmt(t.from)} bis ${fmt(t.to)}">${g.s}${x||''}</svg>`;};
+  const f=fbBox(body);
+  const warum=`Von ${fmt(t.from)} bis ${fmt(t.to)} sind es ${t.div} gleiche Schritte — ein Schritt ist <b>${fmt(t.step)}</b>.`;
+  if(t.mode==='lesen'){
+    paint(nlMark(g.X(t.idx),''));
+    const inp=numInput(body);
+    inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+    const b=pruefBtn(body,()=>{
+      if(Number(digitsOf(inp.value))===t.val){inp.disabled=true;b.remove();good();
+        paint(nlMark(g.X(t.idx),fmt(t.val),'ok'));
+        f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${warum}`;weiter(body);}
+      else{bad();f.className='fb no show';f.innerHTML=`Noch nicht. ${warum} Zähl vom beschrifteten Strich aus weiter.`;}});
+    inp.focus();
+  }else{
+    let hits='';const w=(NR-NL)/t.div;
+    for(let i=0;i<=t.div;i++)hits+=`<rect class="hit" data-i="${i}" x="${g.X(i)-w/2}" y="${NY-26}" width="${w}" height="54" fill="transparent" rx="6"/>`;
+    const show=(extra,live)=>{paint((live?hits:'')+(extra||''));
+      if(live)wrap.querySelectorAll('.hit').forEach(h=>h.onclick=()=>tap(Number(h.dataset.i)));};
+    function tap(i){
+      if(i===t.idx){good();show(nlMark(g.X(i),fmt(t.val),'ok'),false);
+        f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${warum}`;weiter(body);}
+      else{bad();show(nlMark(g.X(i),fmt(t.from+t.step*i),'no'),true);
+        f.className='fb no show';f.innerHTML=`Dort steht <b>${fmt(t.from+t.step*i)}</b>. ${warum}`;}}
+    show('',true);}}
+
+/* ---------- Nachbarzahlen ---------- */
+const RUND={10:['Zehner','Zehnern','voriger Zehner','nächster Zehner','Einerstelle'],
+            100:['Hunderter','Hundertern','voriger Hunderter','nächster Hunderter','Zehner- und Einerstelle'],
+            1000:['Tausender','Tausendern','voriger Tausender','nächster Tausender','letzten drei Stellen']};
+function rNachbar(t,body){
+  const rund=t.mode==='rund',u=rund?t.u:1,R=rund?RUND[u]:null;
+  const base=Math.floor(t.v/u)*u;
+  const want=[rund?base:t.v-1, rund?base+u:t.v+1];
+  const labs=rund?[R[2],R[3]]:['Vorgänger','Nachfolger'];
+  body.appendChild(el('div','q',rund?`Zwischen welchen ${R[1]} liegt <b>${fmt(t.v)}</b>?`
+    :`Vorgänger und Nachfolger von <b>${fmt(t.v)}</b>`));
+  body.appendChild(el('div','tip',rund
+    ?`Ein ${R[0]} endet glatt auf ${u===10?'0':u===100?'00':'000'}.`
+    :'Der Vorgänger kommt direkt davor, der Nachfolger direkt danach — immer <b>eins</b> Unterschied.'));
+  const row=el('div','row'),ins=[];
+  const feld=lab=>{const c=el('div','col'),i=el('input');
+    i.type='text';i.inputMode='numeric';i.className='cin';i.setAttribute('aria-label',lab);
+    i.oninput=()=>{i.value=i.value.replace(/[^\d.]/g,'');};
+    i.onkeydown=e=>{if(e.key==='Enter')b.click();};
+    c.appendChild(i);c.appendChild(el('div','lab',lab));ins.push(i);return c;};
+  row.appendChild(feld(labs[0]));
+  const mid=el('div','col');mid.appendChild(el('div','mid',fmt(t.v)));
+  mid.appendChild(el('div','lab',rund?'liegt dazwischen':'deine Zahl'));row.appendChild(mid);
+  row.appendChild(feld(labs[1]));
+  body.appendChild(row);
+  const f=fbBox(body);
+  const b=pruefBtn(body,()=>{
+    let all=true;
+    ins.forEach((i,k)=>{const ok=i.value!==''&&Number(digitsOf(i.value))===want[k];
+      i.className='cin '+(ok?'ok':'no');if(!ok)all=false;});
+    if(all){ins.forEach(i=>i.disabled=true);b.remove();good();
+      f.className='fb ok show';
+      f.innerHTML=`<b>${lob()}</b> ${fmt(want[0])} — ${fmt(t.v)} — ${fmt(want[1])}.`
+        +(rund?'':(/[09]$/.test(String(t.v))?' Und genau da passiert der Übergang.':''));
+      weiter(body);}
+    else{bad();f.className='fb no show';
+      f.innerHTML=rund?`Rot stimmt noch nicht. Schau auf die ${R[4]}: auf 0 gesetzt ergibt den ${R[0]} davor, der nächste ist ${fmt(u)} mehr.`
+        :'Rot stimmt noch nicht. Vorgänger = eins weniger, Nachfolger = eins mehr. Achtung, wenn die Zahl auf 9 oder 0 endet!';}});
+  ins[0].focus();}
+
+/* ---------- Stellenwerttafel ---------- */
+function rStw(t,body){
+  const ds=dg(t.v,4),f=fbBox(body);
+  if(t.mode==='stelle'){
+    body.appendChild(el('div','q',`Wie viele <b>${STELLEN[t.p]}</b> hat ${fmt(t.v)}?`));
+    body.appendChild(el('div','tip','Zähl die Stellen von rechts: Einer, Zehner, Hunderter, Tausender.'));
+    const row=el('div','row');
+    ds.forEach((d,i)=>{const c=el('div','col');
+      c.appendChild(el('div','fix',String(d)));c.appendChild(el('div','lab',STELLEN[i]));row.appendChild(c);});
+    body.appendChild(row);
+    const inp=numInput(body,STELLEN[t.p]);inp.maxLength=1;
+    inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+    const b=pruefBtn(body,()=>{
+      if(Number(digitsOf(inp.value))===ds[t.p]){inp.disabled=true;b.remove();good();
+        f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${fmt(t.v)} hat <b>${ds[t.p]}</b> ${STELLEN[t.p]}.`;weiter(body);}
+      else{bad();f.className='fb no show';
+        f.innerHTML=`Noch nicht. In ${fmt(t.v)} stehen ${ds[0]} T, ${ds[1]} H, ${ds[2]} Z und ${ds[3]} E — gefragt sind die <b>${STELLEN[t.p]}</b>.`;}});
+    inp.focus();return;}
+  const row=el('div','row four');
+  if(t.mode==='ein'){
+    body.appendChild(el('div','q',`Trag <b>${fmt(t.v)}</b> in die Stellenwerttafel ein`));
+    body.appendChild(el('div','tip','Jede Stelle bekommt genau eine Ziffer — eine leere Stelle bekommt eine <b>0</b>.'));
+    const ins=[];
+    ds.forEach((d,i)=>{const c=el('div','col'),inp=el('input');
+      inp.type='text';inp.inputMode='numeric';inp.maxLength=1;inp.className='cin';
+      inp.setAttribute('aria-label',STELLEN[i]);
+      inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'');if(inp.value&&ins[i+1])ins[i+1].focus();};
+      inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+      ins.push(inp);c.appendChild(inp);c.appendChild(el('div','lab',STELLEN1[i]+'<br>'+STELLEN[i]));row.appendChild(c);});
+    body.appendChild(row);
+    const b=pruefBtn(body,()=>{
+      let all=true;
+      ins.forEach((inp,i)=>{const ok=inp.value!==''&&Number(inp.value)===ds[i];
+        inp.className='cin '+(ok?'ok':'no');if(!ok)all=false;});
+      if(all){ins.forEach(i=>i.disabled=true);b.remove();good();
+        f.className='fb ok show';
+        f.innerHTML=`<b>${lob()}</b> ${fmt(t.v)} = ${ds[0]} T + ${ds[1]} H + ${ds[2]} Z + ${ds[3]} E.`
+          +(ds.indexOf(0)>=0?' Die leere Stelle bekommt eine <b>0</b> — sie wird nie weggelassen.':'');
+        weiter(body);}
+      else{bad();f.className='fb no show';
+        f.innerHTML='Rot stimmt noch nicht. Lies die Zahl langsam von links: Tausender, Hunderter, Zehner, Einer.';}});
+    ins[0].focus();return;}
+  body.appendChild(el('div','q','Welche Zahl steht in der Stellenwerttafel?'));
+  ds.forEach((d,i)=>{const c=el('div','col');
+    c.appendChild(el('div','fix',String(d)));c.appendChild(el('div','lab',STELLEN1[i]+'<br>'+STELLEN[i]));row.appendChild(c);});
+  body.appendChild(row);
+  const inp=numInput(body);
+  inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+  const b=pruefBtn(body,()=>{
+    if(Number(digitsOf(inp.value))===t.v){inp.disabled=true;b.remove();good();
+      f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${ds[0]} T + ${ds[1]} H + ${ds[2]} Z + ${ds[3]} E = <b>${fmt(t.v)}</b>.`;
+      weiter(body);}
+    else{bad();f.className='fb no show';
+      f.innerHTML='Noch nicht. Schreib die Ziffern in derselben Reihenfolge hintereinander — von den Tausendern bis zu den Einern.';}});
+  inp.focus();}
+
+/* ---------- Zerlegen ---------- */
+function rZerleg(t,body){
+  const ds=dg(t.v,4),teile=[ds[0]*1000,ds[1]*100,ds[2]*10,ds[3]],f=fbBox(body);
+  if(t.mode==='in'){
+    body.appendChild(el('div','q',`Zerleg <b>${fmt(t.v)}</b>`));
+    body.appendChild(el('div','tip','Tausender, Hunderter, Zehner, Einer — jede Stelle einzeln.'));
+    const row=el('div','row four'),ins=[];
+    STELLEN.forEach((lab,i)=>{
+      if(i)row.appendChild(el('div','op','+'));
+      const c=el('div','col'),inp=el('input');
+      inp.type='text';inp.inputMode='numeric';inp.className='cin';inp.setAttribute('aria-label',lab);
+      inp.oninput=()=>{inp.value=inp.value.replace(/[^\d.]/g,'');};
+      inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+      c.appendChild(inp);c.appendChild(el('div','lab',lab));row.appendChild(c);ins.push(inp);});
+    body.appendChild(row);
+    const b=pruefBtn(body,()=>{
+      let all=true;
+      ins.forEach((inp,i)=>{const ok=inp.value!==''&&Number(digitsOf(inp.value))===teile[i];
+        inp.className='cin '+(ok?'ok':'no');if(!ok)all=false;});
+      if(all){ins.forEach(i=>i.disabled=true);b.remove();good();
+        f.className='fb ok show';
+        f.innerHTML=`<b>${lob()}</b> ${fmt(t.v)} = ${fmt(teile[0])} + ${fmt(teile[1])} + ${teile[2]} + ${teile[3]}.`;
+        weiter(body);}
+      else{bad();f.className='fb no show';
+        f.innerHTML=`Rot stimmt noch nicht. Die <b>${ds[1]}</b> an der Hunderterstelle ist nicht ${ds[1]}, sondern ${fmt(ds[1]*100)} — jede Ziffer zählt so viel, wie ihre Stelle wert ist.`;}});
+    ins[0].focus();return;}
+  const gezeigt=teile.filter(p=>p>0);
+  body.appendChild(el('div','q',gezeigt.map(fmt).join(' + ')+' = ?'));
+  body.appendChild(el('div','tip','Setz die Teile wieder zu einer Zahl zusammen. Eine Stelle, die fehlt, bekommt eine <b>0</b>.'));
+  const inp=numInput(body);
+  inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+  const b=pruefBtn(body,()=>{
+    if(Number(digitsOf(inp.value))===t.v){inp.disabled=true;b.remove();good();
+      f.className='fb ok show';
+      f.innerHTML=`<b>${lob()}</b> ${gezeigt.map(fmt).join(' + ')} = <b>${fmt(t.v)}</b>`
+        +(teile.indexOf(0)>=0?' — und an der leeren Stelle steht eine <b>0</b>.':'');
+      weiter(body);}
+    else{bad();f.className='fb no show';
+      f.innerHTML='Noch nicht. Trag die Teile in die Stellenwerttafel ein: T, H, Z, E. Wo nichts steht, kommt eine <b>0</b>.';}});
+  inp.focus();}
+
+/* ---------- Zahlwörter ---------- */
+function rZwort(t,body){
+  const wort=wordOf(t.v),teile=wParts(t.v),f=fbBox(body);
+  if(t.mode==='lesen'){
+    body.appendChild(el('div','q','Schreib als Zahl:'));
+    body.appendChild(el('div','word',wort));
+    body.appendChild(el('div','tip','Zerleg das Wort: alles vor <b>tausend</b>, alles vor <b>hundert</b>, und ganz hinten Einer und Zehner.'));
+    const inp=numInput(body);
+    inp.onkeydown=e=>{if(e.key==='Enter')b.click();};
+    const b=pruefBtn(body,()=>{
+      if(Number(digitsOf(inp.value))===t.v){inp.disabled=true;b.remove();good();
+        f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${wort} = <b>${fmt(t.v)}</b>`;weiter(body);}
+      else{bad();f.className='fb no show';
+        f.innerHTML='Noch nicht. Denk an die Reihenfolge: gesprochen wird erst der Einer, dann der Zehner — geschrieben ist es umgekehrt.';}});
+    inp.focus();return;}
+  if(t.mode==='wahl'){
+    body.appendChild(el('div','q',`Welches Zahlwort gehört zu <b>${fmt(t.v)}</b>?`));
+    body.appendChild(el('div','tip','Achtung bei Zehnern und Einern: gesprochen wird erst der Einer, dann der Zehner.'));
+    const box=el('div','opts');body.appendChild(box);
+    shuffle([t.v].concat(zwFalsch(t.v))).forEach((v,i)=>{
+      const b=el('button','opt',`<span class="mk">${'ABC'[i]}</span><span class="wd">${wordOf(v)}</span>`);
+      b.onclick=()=>{
+        if(v===t.v){Array.prototype.forEach.call(box.children,c=>c.disabled=true);b.classList.add('right');good();
+          f.className='fb ok show';f.innerHTML=`<b>${lob()}</b> ${fmt(t.v)} heißt <b>${wort}</b> — alles in einem Wort.`;
+          weiter(body);}
+        else{b.classList.add('wrong');b.disabled=true;bad();
+          f.className='fb no show';f.innerHTML=`Das wäre <b>${fmt(v)}</b>. Lies die Zahl Stelle für Stelle und vergleiche.`;}};
+      box.appendChild(b);});
+    return;}
+  body.appendChild(el('div','q',`Schreib das Zahlwort für <b>${fmt(t.v)}</b>`));
+  body.appendChild(el('div','tip','Tipp die Bausteine in der richtigen Reihenfolge an. Zum Wegnehmen den Baustein oben antippen.'));
+  const wb=el('div','wbox');body.appendChild(wb);
+  const chips=el('div','chips');body.appendChild(chips);
+  const extra=['sieben','sechzig','siebzig','hundert','tausend','und','drei','vier','zwanzig']
+    .filter(w=>teile.indexOf(w)<0);
+  const items=shuffle(teile.map(w=>({w})).concat(shuffle(extra).slice(0,2).map(w=>({w}))));
+  const gewaehlt=[],btns={};
+  const zeige=()=>{wb.innerHTML='';
+    if(!gewaehlt.length){wb.appendChild(el('div','ph','hier entsteht dein Zahlwort'));return;}
+    gewaehlt.forEach((c,k)=>{const x=el('button','wp',c.w);
+      x.onclick=()=>{gewaehlt.splice(k,1);btns[c.id].classList.remove('used');zeige();};
+      wb.appendChild(x);});};
+  items.forEach((it,k)=>{const id='c'+k,x=el('button','chip',it.w);btns[id]=x;
+    x.onclick=()=>{gewaehlt.push({w:it.w,id});x.classList.add('used');zeige();sTick();};
+    chips.appendChild(x);});
+  zeige();
+  const b=pruefBtn(body,()=>{
+    const got=gewaehlt.map(c=>c.w).join('');
+    if(got===wort){chips.remove();b.remove();
+      Array.prototype.forEach.call(wb.querySelectorAll('.wp'),x=>x.disabled=true);good();
+      f.className='fb ok show';
+      f.innerHTML=`<b>${lob()}</b> Genau so: <b>${wort}</b> — alles in <b>einem</b> Wort und klein geschrieben.`;
+      weiter(body);}
+    else{bad();f.className='fb no show';
+      f.innerHTML=!got?'Noch ist nichts ausgewählt. Fang mit den Tausendern an.'
+        :'So heißt es noch nicht. Reihenfolge: erst die Tausender, dann die Hunderter, ganz zum Schluss der Einer, dann <b>und</b>, dann der Zehner.';}});}
+
+/* ---------- Ergebnis ---------- */
+function finish(){
+  const sec=Math.round((Date.now()-run.t0)/1000);
+  stopTimer();
+  $('#rBody').innerHTML='';
+  const t=run.tasks.length,r=run.right,st=starsFor(r,t),pct=r/t;
+  if(run.id!=='fehler'){
+    const eintrag={r,t,stars:st,d:new Date().toISOString().slice(0,10)};
+    if(run.timer)eintrag.sec=sec;
+    S.last[run.id]=eintrag;
+    const b=S.best[run.id];
+    if(!b||r/t>b.r/b.t)S.best[run.id]=eintrag;}
+  save();
+  sWin();
+  const v=$('#view-done');v.innerHTML='';
+  const box=el('div','stage'),d=el('div','result');
+  d.appendChild(el('div',null,`<div style="font-size:46px;line-height:1">${pct>=.9?'🏆':pct>=.75?'🎉':pct>=.5?'💪':'🌱'}</div>`));
+  d.appendChild(el('h2',null,run.name));
+  const big=el('div','big',`${r} / ${t}`);
+  big.style.color=pct>=.75?'var(--mint)':pct>=.5?'var(--amber)':'var(--ink2)';
+  d.appendChild(big);
+  d.appendChild(el('div','starbig',starStr(st)));
+  d.appendChild(el('div','tip',pct>=.9?'Das sitzt. Genau so darf der Test morgen laufen.'
+    :pct>=.75?'Schon richtig gut — die letzten Wackler holst du dir gleich.'
+    :pct>=.5?'Guter Zwischenstand. Nimm dir den Bereich nochmal vor, bei dem es gehakt hat.'
+    :'Noch unsicher — und das ist okay. Geh den Bereich in Ruhe nochmal durch, dann klappt es.'));
+  if(run.timer)d.appendChild(el('div','tip',
+    `Zeit: <b>${zeit(sec)}</b> Minuten:Sekunden.`+(sec<=900?' In der Schule sind 15 Minuten Zeit — das passt.'
+      :' In der Schule sind 15 Minuten Zeit — übe die einzelnen Bereiche, dann wirst du schneller.')));
+  if(run.wrong.length){
+    const m=el('div','misses');
+    m.appendChild(el('h3',null,`Das nimmst du dir nochmal vor (${run.wrong.length}):`));
+    const ol=el('ol');
+    run.wrong.forEach(w=>ol.appendChild(el('li',null,`${w.q} → <b>${w.a}</b>`)));
+    m.appendChild(ol);d.appendChild(m);}
+  const acts=el('div','acts');
+  const again=el('button','btn','Nochmal üben');
+  again.onclick=()=>{
+    if(run.id==='fehler')return startRun({id:'fehler',name:'Deine Fehler nochmal',ic:'🔁',
+      tasks:shuffle(S.wrong).slice(0,Math.min(S.wrong.length,12)).map(x=>Object.assign({},x)),pool:true});
+    const a=byArea(run.id);
+    if(a)return startRun({id:a.id,name:a.name,ic:a.ic,tasks:a.mk(10)});
+    const tt=TESTS.find(x=>x.id===run.id);
+    startRun({id:tt.id,name:tt.name,ic:tt.ic,tasks:mixed(tt.n),timer:tt.timer});};
+  acts.appendChild(again);
+  const home=el('button','btn ghost','Zurück zum Plan');
+  home.onclick=()=>{paintHome();view('home');scrollTo({top:0,behavior:reduce?'auto':'smooth'});};
+  acts.appendChild(home);
+  d.appendChild(acts);
+  box.appendChild(d);v.appendChild(box);
+  view('done');scrollTo({top:0,behavior:reduce?'auto':'smooth'});}
+
+/* ---------- Start ---------- */
+$('#abort').onclick=()=>{stopTimer();paintHome();view('home');};
+$('#sound').onclick=()=>{S.muted=!S.muted;muted=S.muted;$('#sound').textContent=muted?'🔇':'🔊';save();if(!muted)sTick();};
+showWho();
+load();
+muted=!!S.muted;$('#sound').textContent=muted?'🔇':'🔊';
+if(!Array.isArray(S.wrong))S.wrong=[];
+paintHome();
+view('home');
+})();
+</script>
+</body>
+</html>

@@ -10,7 +10,9 @@ weitergeht. Hier steht, was existiert, wie es aufgebaut ist und was noch offen i
 | **Für die Kinder** | https://planvolleschaos.github.io/Schule/ |
 | Englisch direkt | https://planvolleschaos.github.io/Schule/englisch/ |
 | Sachkunde direkt | https://planvolleschaos.github.io/Schule/sachkunde/ |
-| Mathe direkt | https://planvolleschaos.github.io/Schule/mathe/ |
+| Mathe-Übersicht | https://planvolleschaos.github.io/Schule/mathe/ |
+| Mathe · Klasse 3 | https://planvolleschaos.github.io/Schule/mathe/klasse3/ |
+| Mathe · Zahlenraum 10.000 | https://planvolleschaos.github.io/Schule/mathe/zr10000/ |
 | Repository | https://github.com/planvollesChaos/Schule |
 | Claude-Version zum Pflegen (Englisch) | https://claude.ai/code/artifact/889ecce8-ee33-464a-a061-0b6f8e6de35a |
 
@@ -23,10 +25,14 @@ GitHub Pages baut danach automatisch – dauert ein bis zwei Minuten.)
 ```
 /                     Startseite: Profilwahl, dann Fächerauswahl
 ├── englisch/         Wortschatz-Expedition (alles in einer index.html)
-├── mathe/            Nest und Hand – schriftlich plus und minus
+├── mathe/            Übersicht mit zwei Reitern: Klasse 3 und Klasse 4
+│   ├── klasse3/      Nest und Hand – schriftlich plus und minus
+│   └── zr10000/      Orientierung im Zahlenraum 10.000
 └── sachkunde/        Fahrrad-Führerschein
     └── schilder/     50 Verkehrszeichen als PNG
 ```
+
+Jede App ist eine einzelne `index.html` ohne Abhängigkeiten.
 
 ## Profile
 
@@ -42,7 +48,9 @@ Gespeichert wird im `localStorage` des Geräts:
 | `wex:currentKid` | wer gerade ausgewählt ist (gilt für alle Fächer) |
 | `wex:topics`, `wex:words`, `wex:stories`, `wex:progress`, `wex:activity` | Englisch |
 | `rad:stats:<profil-id>` | Sachkunde, Übungsstand pro Kind |
-| `nest-state:<profil-id>` | Mathe, Übungsstand pro Kind |
+| `nest-state:<profil-id>` | Mathe Klasse 3, Übungsstand pro Kind |
+| `zr10k:<profil-id>` | Mathe Zahlenraum 10.000, Ergebnisse und Fehler-Stapel |
+| `mathe:reiter` | welcher Mathe-Reiter zuletzt offen war |
 
 Es werden keine Daten an einen Server geschickt. Jedes Gerät hat seinen eigenen Stand.
 
@@ -86,9 +94,9 @@ fest eingebaut. Nach Änderungen in der Claude-Version muss die GitHub-Datei neu
 erzeugt werden (Vorgehen: Daten aus der Artifact-Datenbank lesen, in die HTML als
 Seed einbauen, committen).
 
-## Mathe – Nest und Hand
+## Mathe – Klasse 3: Nest und Hand
 
-Schriftliche Addition und Subtraktion als Wiederholung aus Klasse 3, eingebettet in
+`mathe/klasse3/` – schriftliche Addition und Subtraktion als Wiederholung aus Klasse 3, eingebettet in
 eine Wachtel-Geschichte: Stellenwerte heißen Kisten (1000), Kartons (100), Schachteln
 (10) und einzelne Eier. Der Zehnerübergang ist damit anschaulich – beim Plus wird eine
 Schachtel voll und wandert weiter, beim Minus muss eine aufgemacht werden.
@@ -100,7 +108,54 @@ Beim Minus lässt sich einstellen, welches Verfahren die Schule nutzt – Abzieh
 (Entbündeln) oder Ergänzen (Erweitern).
 
 Herkunft: aus `C:\Users\nancy\Schule\wachtel-mathe` übernommen. Beim Import ergänzt:
-Rückweg zur Fächerauswahl, Profilanzeige und ein Übungsstand pro Kind.
+Rückweg, Profilanzeige und ein Übungsstand pro Kind. Der Rückweg führt seit der
+Aufteilung auf **← Mathe** statt direkt zur Fächerauswahl; die Datei liegt jetzt
+unter `mathe/klasse3/`, der gespeicherte Stand bleibt trotzdem erhalten, weil
+`localStorage` an der Adresse hängt und nicht am Ordner.
+
+## Mathe – Klasse 4: Orientierung im Zahlenraum 10.000
+
+`mathe/zr10000/` – eine **eigene App mit eigenem Layout**, bewusst ohne Bezug zur
+Wachtel-Geschichte: hier geht es nicht um Mengen und Zehnerübergang, sondern ums
+Orientieren im Zahlenraum. Anderes Farbschema (Blau/Violett statt Stroh und Eier),
+andere Schrift (Atkinson Hyperlegible), keine Tage, kein Tagesplan – stattdessen ein
+**Trainingsplan aus Bereichen und Tests**.
+
+Gebaut für den Test der 4b am 16.9.2026; der Schulkalender nennt als Inhalt:
+Zahlenstrahl, Nachbarzahlen, Stellenwerttafel, Zerlegen von Zahlen, Zahlwörter schreiben.
+
+**Fünf Übungsbereiche mit je 10 Aufgaben:**
+
+| Bereich | Was drin steckt |
+|---|---|
+| Zahlenstrahl | Pfeil ablesen **und** den richtigen Strich antippen; fünf Zoomstufen von 0–10.000 bis zu Zehnerschritten, teils nur mit beschrifteten Enden |
+| Nachbarzahlen | Vorgänger/Nachfolger (mit 3.000, 4.199, 5.999) und Nachbarzehner, -hunderter, -tausender |
+| Stellenwerttafel | Zahl → Tafel, Tafel → Zahl und „Wie viele Hunderter hat 4.276?" |
+| Zahlen zerlegen | 4.276 = 4.000 + 200 + 70 + 6 und zurück, auch mit Lücken wie 3.000 + 40 + 2 |
+| Zahlwörter | Wort → Zahl, richtiges Wort auswählen, Wort aus Bausteinen zusammensetzen |
+
+**Zwei Tests:** Kurztest (12 gemischte Aufgaben) und Großer Probetest (24 Aufgaben mit
+mitlaufender Uhr; am Ende der Hinweis, dass in der Schule 15 Minuten Zeit sind).
+
+**Fehler-Stapel:** Jede Aufgabe, die im ersten Anlauf schiefgeht, landet auf einem
+Stapel (max. 40). Ab vier Aufgaben erscheint die Kachel „Deine Fehler nochmal" –
+was dort im ersten Anlauf sitzt, fliegt vom Stapel. Am Ende jeder Runde steht
+außerdem, welche Aufgaben daneben gingen und wie die richtige Antwort lautet.
+
+Pro Bereich werden beste und letzte Runde gespeichert, dazu 0–3 Sterne
+(ab 90 % drei, ab 75 % zwei, ab 50 % einer). Schlüssel: `zr10k:<profil-id>`.
+
+Die Zahlwörter werden im Code erzeugt (`wordOf`), es gibt keine Wortliste. Damit sind
+auch die Sonderfälle dabei: „viertausendsechs", „eintausendeins", „zehntausend",
+„sechsundsiebzig" gegen „siebenundsechzig".
+
+### Mathe-Übersicht
+
+`mathe/index.html` ist nur noch die Auswahlseite mit zwei Reitern – **Wiederholung
+Klasse 3** und **Klasse 4**. Welcher Reiter zuletzt offen war, steht in
+`localStorage` unter `mathe:reiter`; beim ersten Aufruf ist Klasse 4 vorn.
+Neue Themen kommen als eigener Ordner unter `mathe/` dazu und werden im passenden
+Reiter verlinkt.
 
 ## Sachkunde – Fahrrad-Führerschein
 
@@ -143,6 +198,8 @@ Verkehrswacht fest.
 
 ## Erledigt
 
+- Mathe in zwei Bereiche geteilt (15.9.2026): `klasse3/` behält Nest und Hand,
+  `zr10000/` ist neu für den Test am 16.9. Die Übersicht hat jetzt zwei Reiter.
 - Handy-Ansicht: Englisch hatte keinen viewport-Meta-Tag und wurde deshalb
   herausgezoomt (Sept. 2026).
 - Mathe importiert, Startseite vollständig.
