@@ -31,7 +31,7 @@ STECKBRIEF
 HALTUNG BEI UNS
 • Freilandhaltung in Gruppen (nach Geschlecht getrennt)
 • An Heu, Frischfutter und Pellets gewöhnt
-• Beide Elternteile leben bei uns (siehe Fotos)
+• Beide Elternteile leben bei uns
 • Der Vater ist blutsfremd – keine Inzucht
 
 ABGABE
@@ -50,5 +50,4 @@ Stichworte: Kaninchen, Zwergkaninchen, Löwenköpfchen, Widder, Hase, Kaninchenb
 - [ ] Alter aktualisiert, falls die Anzeige später erneut eingestellt wird
 - [ ] Foto 1: das Tier allein, hell und scharf (das wird zum Vorschaubild)
 - [ ] Fotos 2–4: weitere Ansichten des Tiers
-- [ ] Letzte Fotos: Rammler und Häsinnen (Eltern)
 - [ ] Am besten eine Anzeige pro Tier mit eigenem Titel und eigenen Fotos
